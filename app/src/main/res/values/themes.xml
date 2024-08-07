@@ -2,8 +2,18 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.AndroidInterviewTrainingApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:colorBackground">@color/my_light_primary</item>
     </style>
 
     <style name="Theme.AndroidInterviewTrainingApp" parent="Base.Theme.AndroidInterviewTrainingApp" />
+    <style name="main_buttons" parent="@style/Widget.AppCompat.Button.Colored">
+        <item name="background">@drawable/main_buttons_design</item>
+        <item name="colorButtonNormal">#C8AEF4</item>
+        <item name="colorControlHighlight">#B088F6</item>
+    </style>
+    <style name="interview_button" parent="@style/Widget.AppCompat.Button.Colored">
+        <item name="background">@drawable/interview_button</item>
+        <item name="colorButtonNormal">#E6BEBB</item>
+        <item name="colorControlHighlight">#F1847C</item>
+    </style>
 </resources>
