@@ -8,4 +8,16 @@
     <string name="marathon">Марафон</string>
     <string name="mistakes">Ошибки</string>
     <string name="fav">Избранное</string>
+    <string name="question_number">1</string>
+    <string name="question_string">Здесь будет текста вопроса</string>
+    <string name="theme_string">Здесь будет выбранная тема</string>
+    <string name="button_start">Начать тестирование</string>
+    <string name="choosing_theme">Какая-то тема для изучения</string>
+    <string name="marathon_text">Марафон по всем 800 вопросам</string>
+    <string name="button_base">База</string>
+    <string name="button_threads">RxJava / Coroutines</string>
+    <string name="button_android">Android</string>
+    <string name="button_sql">SQL</string>
+    <string name="button_kotlin">Kotlin</string>
+    <string name="button_java">Java</string>
 </resources>

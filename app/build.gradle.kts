@@ -48,4 +48,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation ("com.github.Omega-R:OmegaCenterIconButton:0.0.4@aar")
+
+    implementation (libs.recyclerview.v7)
 }
