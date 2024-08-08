@@ -33,6 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures{
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -49,5 +52,5 @@ dependencies {
 
     implementation ("com.github.Omega-R:OmegaCenterIconButton:0.0.4@aar")
 
-    implementation (libs.recyclerview.v7)
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
 }
