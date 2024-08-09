@@ -1,10 +1,9 @@
 package ru.anura.androidinterviewtrainingapp.domain.usecases
 
-import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.domain.repository.InterviewRepository
 
-class GenerateQuestionUseCase(
+class ChangeIsCorrectUseCase(
     private val repository: InterviewRepository
 ) {
-    operator fun invoke(theme: Theme) = repository.generateQuestion(theme)
+    operator fun invoke(id: Int, isCorrect: Boolean) = repository.changeIsCorrect(id, isCorrect)
 }

@@ -2,8 +2,8 @@ package ru.anura.androidinterviewtrainingapp.domain.usecases
 
 import ru.anura.androidinterviewtrainingapp.domain.repository.InterviewRepository
 
-class AddToMistakesUseCase(
+class ChangeIsFavUseCase(
     private val repository: InterviewRepository
 ) {
-    operator fun invoke() = repository.addToMistakes()
+    operator fun invoke(id: Int, isFav: Boolean) = repository.changeIsFav(id,isFav)
 }
