@@ -24,7 +24,8 @@ class QuestionViewModel(
 
     private val changeIsCorrectUseCase = ChangeIsCorrectUseCase(repository)
     private val changeIsFavUseCase = ChangeIsFavUseCase(repository)
-//    private val generateQuestionsUseCase = GenerateQuestionsUseCase(repository)
+
+    //    private val generateQuestionsUseCase = GenerateQuestionsUseCase(repository)
 //    private val generateQuestionsCurrentThemeUseCase = GenerateQuestionsCurrentThemeUseCase(repository)
     private val getQuestionByIdUseCase = GetQuestionByIdUseCase(repository)
     private val generateTestCurrentThemeUseCase = GenerateTestCurrentThemeUseCase(repository)
@@ -36,14 +37,15 @@ class QuestionViewModel(
         get() = _test
 
 
-
     init {
         startTest()
     }
 
+
     private fun startTest() {
         generateTest(2)
     }
+
     private fun generateTest(countOfQuestions: Int) {
         viewModelScope.launch {
             _test.value = generateTestUseCase(countOfQuestions)

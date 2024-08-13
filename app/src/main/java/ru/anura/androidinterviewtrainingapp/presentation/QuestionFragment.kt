@@ -8,17 +8,13 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import ru.anura.androidinterviewtrainingapp.R
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentQuestionsBinding
 import ru.anura.androidinterviewtrainingapp.domain.entity.Test
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.presentation.adapters.OptionsAdapter
-import java.io.File
 
 class QuestionFragment : Fragment() {
 
@@ -97,19 +93,20 @@ class QuestionFragment : Fragment() {
         val nonNullView = requireNotNull(view)
         viewModel.test.observe(viewLifecycleOwner) { test ->
             createTextViews(test.countOfQuestions)
-            setQuestion(test, 1)
+            setQuestionSettings(test, 0)
             for (i in 1..test.countOfQuestions) {
                 val textView =
                     nonNullView.findViewById<TextView>(binding.container.getChildAt(i - 1).id)
                 textView?.setOnClickListener {
-                    setQuestion(test, i)
+                    setQuestionSettings(test, i - 1)
                 }
+                //setupOnClickOptionListener(test.questions[i-1].answer)
             }
         }
     }
 
-    private fun setQuestion(test: Test, numberOfQuestion: Int) {
-        binding.questionText.text = test.questions[numberOfQuestion - 1].text
+    private fun setQuestionSettings(test: Test, numberOfQuestion: Int) {
+        binding.questionText.text = test.questions[numberOfQuestion].text
         val imageName = "example"
         //val imageName = test.questions[numberOfQuestion-1].image
         val resourceId = resources.getIdentifier(
@@ -118,9 +115,24 @@ class QuestionFragment : Fragment() {
             requireActivity().packageName
         )
         binding.questionImage.setImageResource(resourceId)
-        optionsAdapter.optionsList = (test.questions[numberOfQuestion - 1].options)
-        Log.d("QuestionFragment", "options: ${test.questions[numberOfQuestion - 1].options}")
+        optionsAdapter.optionsList = (test.questions[numberOfQuestion].options)
+        setupOnClickOptionListener(test.questions[numberOfQuestion].answer)
+        Log.d("QuestionFragment", "options: ${test.questions[numberOfQuestion].options}")
     }
+
+    private fun setupOnClickOptionListener(answer: String) {
+            optionsAdapter.onOptionItemClickListener = {
+                Log.d("QuestionFragment", "From fragment: $it")
+                if (it == answer) {
+                    optionsAdapter.correctAnswer = it
+                    Log.d("QuestionFragment", "Option is correct")
+                } else {
+                    Log.d("QuestionFragment", "Option is wrong $it $answer")
+                }
+            }
+
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

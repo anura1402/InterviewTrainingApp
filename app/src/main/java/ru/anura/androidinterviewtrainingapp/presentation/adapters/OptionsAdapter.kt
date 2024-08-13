@@ -9,18 +9,20 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ru.anura.androidinterviewtrainingapp.R
 
-class OptionsAdapter: RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHolder>() {
+class OptionsAdapter : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHolder>() {
+    var correctAnswer: String? = null
 
     var optionsList = listOf<String>()
-        set(value){
+        set(value) {
             val oldSize = optionsList.size
             val newSize = value.size
             Log.d("OptionsAdapter", "Updating optionsList from size $oldSize to $newSize")
             val callback = OptionListDiffCallback(optionsList, value)
-            val diffResult= DiffUtil.calculateDiff(callback)
+            val diffResult = DiffUtil.calculateDiff(callback)
             diffResult.dispatchUpdatesTo(this)
             field = value
         }
+    var onOptionItemClickListener: ((String) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnswerOptionViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.option_item, parent, false)
@@ -34,13 +36,22 @@ class OptionsAdapter: RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHolder
     override fun onBindViewHolder(holder: AnswerOptionViewHolder, position: Int) {
         val optionItem = optionsList[position]
         holder.tvText.text = optionItem
-        Log.d("OptionsAdapter", "Binding item at position $position: $optionItem")
         //проверка на правильность ответа
+        holder.tvText.setOnClickListener {
+            onOptionItemClickListener?.invoke(optionItem)
+            if (holder.tvText.text == correctAnswer){
+                holder.view.setBackgroundResource(R.color.correct_answer)
+            }else{
+                holder.view.setBackgroundResource(R.color.wrong_answer)
+            }
+            Log.d("QuestionFragment", "From adapter: $optionItem")
+        }
     }
 
     class AnswerOptionViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val tvText = view.findViewById<TextView>(R.id.answerOption)
     }
+
     companion object {
         const val MAX_POOL_SIZE = 25
     }
