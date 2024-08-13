@@ -15,7 +15,9 @@ class OptionListDiffCallback(
     }
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition] === newList[newItemPosition]
+        // Для строк это всегда true, потому что у нас нет идентификаторов.
+        // Но если бы это были объекты с уникальными ID, здесь было бы сравнение их ID здесь.
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {

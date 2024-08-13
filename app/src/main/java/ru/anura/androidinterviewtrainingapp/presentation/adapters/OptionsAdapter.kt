@@ -1,5 +1,6 @@
 package ru.anura.androidinterviewtrainingapp.presentation.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +13,13 @@ class OptionsAdapter: RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHolder
 
     var optionsList = listOf<String>()
         set(value){
+            val oldSize = optionsList.size
+            val newSize = value.size
+            Log.d("OptionsAdapter", "Updating optionsList from size $oldSize to $newSize")
             val callback = OptionListDiffCallback(optionsList, value)
             val diffResult= DiffUtil.calculateDiff(callback)
             diffResult.dispatchUpdatesTo(this)
+            field = value
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnswerOptionViewHolder {
@@ -29,6 +34,7 @@ class OptionsAdapter: RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHolder
     override fun onBindViewHolder(holder: AnswerOptionViewHolder, position: Int) {
         val optionItem = optionsList[position]
         holder.tvText.text = optionItem
+        Log.d("OptionsAdapter", "Binding item at position $position: $optionItem")
         //проверка на правильность ответа
     }
 
