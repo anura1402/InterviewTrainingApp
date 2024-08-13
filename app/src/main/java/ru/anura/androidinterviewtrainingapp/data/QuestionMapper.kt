@@ -7,6 +7,8 @@ class QuestionMapper {
     fun mapEntityToDbModel(question: Question) = QuestionDBModel(
         id = question.id,
         text = question.text,
+        image = question.image,
+        options = question.options,
         answer = question.answer,
         theme = question.theme,
         isCorrectAnswer = question.isCorrectAnswer,
@@ -16,6 +18,8 @@ class QuestionMapper {
     fun mapDbModelToEntity(questionDBModel: QuestionDBModel) = Question(
         id = questionDBModel.id,
         text = questionDBModel.text,
+        image = questionDBModel.image,
+        options = questionDBModel.options,
         answer = questionDBModel.answer,
         theme = questionDBModel.theme,
         isCorrectAnswer = questionDBModel.isCorrectAnswer,

@@ -13,6 +13,7 @@
     <string name="theme_string">Здесь будет выбранная тема</string>
     <string name="button_start">Начать тестирование</string>
     <string name="choosing_theme">Какая-то тема для изучения</string>
+    <string name="choosing_answer">Какой-то вариант ответа</string>
     <string name="marathon_text">Марафон по всем 800 вопросам</string>
     <string name="button_base">База</string>
     <string name="button_threads">RxJava / Coroutines</string>

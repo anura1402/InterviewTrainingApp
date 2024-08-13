@@ -3,8 +3,9 @@ package ru.anura.androidinterviewtrainingapp.domain.usecases
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.domain.repository.InterviewRepository
 
-class GenerateQuestionUseCase(
+class GenerateTestCurrentThemeUseCase (
     private val repository: InterviewRepository
-) {
-    operator fun invoke(theme: Theme) = repository.generateQuestion(theme)
+){
+
+    suspend operator fun invoke(theme: Theme, countOfQuestions:Int) = repository.generateTestCurrentTheme(theme, countOfQuestions)
 }

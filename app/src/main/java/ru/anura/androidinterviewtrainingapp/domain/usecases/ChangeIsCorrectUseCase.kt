@@ -5,5 +5,5 @@ import ru.anura.androidinterviewtrainingapp.domain.repository.InterviewRepositor
 class ChangeIsCorrectUseCase(
     private val repository: InterviewRepository
 ) {
-    operator fun invoke(id: Int, isCorrect: Boolean) = repository.changeIsCorrect(id, isCorrect)
+    suspend operator fun invoke(id: Int, isCorrect: Boolean) = repository.changeIsCorrect(id, isCorrect)
 }

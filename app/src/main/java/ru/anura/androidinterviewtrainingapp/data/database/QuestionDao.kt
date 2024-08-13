@@ -22,7 +22,7 @@ interface QuestionDao {
 
     // updates a question.
     @Update
-    suspend fun updateEvent(question :QuestionDBModel)
+    suspend fun updateQuestion(question :QuestionDBModel)
 
     // read all the questions from questionTable
     // and arrange questions in ascending order
@@ -45,14 +45,14 @@ interface QuestionDao {
 
 
     @Query("UPDATE questionTable SET isFavorite = :isFav WHERE question_id = :id")
-    fun changeIsFav(id: Int, isFav:Boolean)
+    suspend fun changeIsFav(id: Int, isFav:Boolean)
     @Query("UPDATE questionTable SET isCorrectAnswer = :isCorrect WHERE question_id = :id")
-    fun changeIsCorrect(id: Int,isCorrect:Boolean)
+    suspend fun changeIsCorrect(id: Int,isCorrect:Boolean)
 
 
 //    suspend fun getTheme() {
 //        TODO("Not yet implemented")
 //    }
-    @Query("SELECT * FROM questionTable WHERE question_theme = :theme ORDER BY RANDOM() LIMIT 1")
-     fun generateQuestion(theme: Theme): QuestionDBModel
+    @Query("SELECT * FROM questionTable WHERE question_theme IN (:themes) ORDER BY RANDOM() LIMIT :num")
+     suspend fun getQuestions(themes: List<String>,num:Int): List<QuestionDBModel>
 }

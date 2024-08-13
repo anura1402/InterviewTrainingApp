@@ -12,6 +12,10 @@ data class QuestionDBModel(
     val id: Int,
     @ColumnInfo(name = "question_text")
     val text: String,
+    @ColumnInfo(name = "question_image")
+    val image: String,
+    @ColumnInfo(name = "question_options")
+    val options: List<String>,
     @ColumnInfo(name = "question_answer")
     val answer: String,
     @ColumnInfo(name = "question_theme")

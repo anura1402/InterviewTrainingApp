@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import ru.anura.androidinterviewtrainingapp.R
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentWelcomeBinding
+import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 
 class WelcomeFragment : Fragment() {
     private var _binding: FragmentWelcomeBinding? = null
@@ -24,21 +25,24 @@ class WelcomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.interviewButton.setOnClickListener {
-            launchQuestionFragment()
+        with(binding){
+            interviewButton.setOnClickListener {
+                launchQuestionFragment(Theme.ALL)
+            }
+            themeButton.setOnClickListener {
+                launchThemesFragment()
+            }
+            mistakeButton.setOnClickListener {
+                launchQuestionFragment(Theme.ALL)
+            }
+            favButton.setOnClickListener {
+                launchQuestionFragment(Theme.ALL)
+            }
+            marathonButton.setOnClickListener {
+                launchMarathonFragment()
+            }
         }
-        binding.themeButton.setOnClickListener {
-            launchThemesFragment()
-        }
-        binding.mistakeButton.setOnClickListener {
-            launchQuestionFragment()
-        }
-        binding.favButton.setOnClickListener {
-            launchQuestionFragment()
-        }
-        binding.marathonButton.setOnClickListener {
-            launchMarathonFragment()
-        }
+
     }
 
     private fun launchThemesFragment() {
@@ -48,9 +52,9 @@ class WelcomeFragment : Fragment() {
             .commit()
     }
 
-    private fun launchQuestionFragment() {
+    private fun launchQuestionFragment(theme: Theme) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, QuestionFragment.newInstance())
+            .replace(R.id.main_container, QuestionFragment.newInstance(theme))
             .addToBackStack(null)
             .commit()
     }
