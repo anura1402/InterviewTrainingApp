@@ -17,7 +17,8 @@ import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.presentation.adapters.OptionsAdapter
 
 class QuestionFragment : Fragment() {
-    private var tries: MutableList<Int> = mutableListOf()
+
+    private var answeredQuestions: MutableList<Boolean> = mutableListOf()
 
     private lateinit var theme: Theme
 
@@ -34,7 +35,7 @@ class QuestionFragment : Fragment() {
         ViewModelProvider(this, viewModelByFactory)[QuestionViewModel::class.java]
     }
 
-    private var answeredQuestions: MutableList<Boolean> = mutableListOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseArgs()
@@ -58,8 +59,6 @@ class QuestionFragment : Fragment() {
     private fun createTextViews(numberOfTextViews: Int) {
         val container: LinearLayout = binding.container
         for (i in 1..numberOfTextViews) {
-            //tries.add(i)
-            //Log.d("ClickOption", "tryToAnswer: $tries")
             // Создаем новый TextView
             val textView = TextView(requireActivity().application)
             // Настраиваем TextView
@@ -111,7 +110,6 @@ class QuestionFragment : Fragment() {
     }
 
     private fun setQuestionSettings(test: Test, numberOfQuestion: Int) {
-        Log.d("debill", "setQuestionSettings: ${answeredQuestions[numberOfQuestion]}")
         binding.questionText.text = test.questions[numberOfQuestion].text
         val imageName = "example"
         //val imageName = test.questions[numberOfQuestion-1].image
@@ -125,13 +123,13 @@ class QuestionFragment : Fragment() {
         optionsAdapter.answeredQuestions = answeredQuestions
         optionsAdapter.currentAnswerId = numberOfQuestion
 
-        setupOnClickOptionListener(test.questions[numberOfQuestion].answer, numberOfQuestion)
-        Log.d("QuestionFragment", "options: ${test.questions[numberOfQuestion].options}")
+        if (!answeredQuestions[numberOfQuestion]) {
+            setupOnClickOptionListener(test.questions[numberOfQuestion].answer)
+        }
     }
 
-    private fun setupOnClickOptionListener(answer: String, numberOfQuestion: Int) {
+    private fun setupOnClickOptionListener(answer: String) {
         optionsAdapter.onOptionItemClickListener = {
-            //Log.d("QuestionFragment", "From fragment: $it")
             if (it == answer) {
                 optionsAdapter.correctAnswer = it
                 Log.d("QuestionFragment", "Option is correct")
