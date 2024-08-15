@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ru.anura.androidinterviewtrainingapp.R
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentQuestionsBinding
 import ru.anura.androidinterviewtrainingapp.domain.entity.Test
@@ -17,8 +18,6 @@ import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.presentation.adapters.OptionsAdapter
 
 class QuestionFragment : Fragment() {
-
-    private var answeredQuestions: MutableList<Boolean> = mutableListOf()
 
     private lateinit var theme: Theme
 
@@ -63,7 +62,6 @@ class QuestionFragment : Fragment() {
             val textView = TextView(requireActivity().application)
             // Настраиваем TextView
             textView.id = View.generateViewId()
-
             textView.text = "$i"
             textView.textSize = 12f // размер текста
             textView.setBackgroundResource(R.color.question_number_background)
@@ -76,10 +74,8 @@ class QuestionFragment : Fragment() {
             textView.layoutParams = params
             // Добавляем TextView в контейнер
             container.addView(textView)
-            answeredQuestions.add(false)
         }
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -119,26 +115,24 @@ class QuestionFragment : Fragment() {
             requireActivity().packageName
         )
         binding.questionImage.setImageResource(resourceId)
-        optionsAdapter.optionsList = (test.questions[numberOfQuestion].options)
-        optionsAdapter.answeredQuestions = answeredQuestions
-        optionsAdapter.currentAnswerId = numberOfQuestion
+        optionsAdapter.items = (test.questions[numberOfQuestion].options)
 
-        if (!answeredQuestions[numberOfQuestion]) {
-            setupOnClickOptionListener(test.questions[numberOfQuestion].answer)
-        }
-    }
 
-    private fun setupOnClickOptionListener(answer: String) {
-        optionsAdapter.onOptionItemClickListener = {
-            if (it == answer) {
-                optionsAdapter.correctAnswer = it
-                Log.d("QuestionFragment", "Option is correct")
-            } else {
-                Log.d("QuestionFragment", "Option is wrong $it $answer")
+        val savedPosition = viewModel.getSelectedOptionForQuestion(numberOfQuestion) ?: RecyclerView.NO_POSITION
+        optionsAdapter.setSelectedPosition(savedPosition)
+        optionsAdapter.currentQuestionId = numberOfQuestion
+
+
+        optionsAdapter.setOnItemClickListener { selectedPosition ->
+            // Сохранение выбранной позиции в ViewModel
+            viewModel.selectOptionForQuestion(numberOfQuestion, selectedPosition)
+            viewModel.checkAnswer(numberOfQuestion, optionsAdapter.items[selectedPosition], test.questions[numberOfQuestion].answer)
+            viewModel.answerResults.observe(viewLifecycleOwner) { answerResults ->
+                optionsAdapter.answerResults = answerResults
+
             }
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
