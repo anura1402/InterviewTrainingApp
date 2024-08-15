@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -67,12 +68,13 @@ class QuestionFragment : Fragment() {
             val textView = TextView(requireActivity().application)
             if (i == 1) {
                 pastTextView = textView
+                textView.setBackgroundResource(R.drawable.border_for_tv)
             }
             // Настраиваем TextView
             textView.id = View.generateViewId()
             textView.text = "$i"
             textView.textSize = 14f // размер текста
-            textView.setBackgroundResource(R.color.question_number_background)
+            if (i != 1) textView.setBackgroundResource(R.color.question_number_background)
             textView.setPadding(24, 16, 24, 16) // отступы
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -80,6 +82,8 @@ class QuestionFragment : Fragment() {
             )
             params.setMargins(12, 16, 12, 16) // отступы
             textView.layoutParams = params
+
+
             // Добавляем TextView в контейнер
             container.addView(textView)
         }
@@ -104,29 +108,46 @@ class QuestionFragment : Fragment() {
         viewModel.test.observe(viewLifecycleOwner) { test ->
             createTextViews(test.countOfQuestions)
             setQuestionSettings(test, 0)
+            var currentIndex = 0
             for (i in 1..test.countOfQuestions) {
+                val index = i - 1
                 val textView =
-                    nonNullView.findViewById<TextView>(binding.container.getChildAt(i - 1).id)
+                    nonNullView.findViewById<TextView>(binding.container.getChildAt(index).id)
                 textView?.setOnClickListener {
-                    //выставление цвета на отвеченный вопрос в TextView
-                    if (answerResults[previousId] == true) {
-                        pastTextView.setBackgroundResource(R.drawable.border_for_tv_correct)
-                    } else if (answerResults[previousId] == false) {
-                        pastTextView.setBackgroundResource(R.drawable.border_for_tv_wrong)
-                    } else {
-                        pastTextView.setBackgroundResource(R.color.question_number_background)
-                    }
                     //выставление цвета на выбранный вопрос в TextView
                     textView.setBackgroundResource(R.drawable.border_for_tv)
-                    setQuestionSettings(test, i - 1)
+                    setQuestionSettings(test, index)
 
-                    previousId = i - 1
-                    pastTextView = textView
+                    changeTextViewBackground(index, textView)
 
+                    currentIndex = index
                 }
+                binding.buttonNextQuestion.setOnClickListener {
 
+                    if (currentIndex < test.countOfQuestions - 1) {
+                        currentIndex++
+                        val nextTextView =
+                            nonNullView.findViewById<TextView>(binding.container.getChildAt(currentIndex).id)
+                        nextTextView.setBackgroundResource(R.drawable.border_for_tv)
+                        setQuestionSettings(test, currentIndex)
+                        changeTextViewBackground(currentIndex, nextTextView)
+                    }
+                }
             }
         }
+    }
+
+    private fun changeTextViewBackground(index: Int, textView: TextView) {
+        //выставление цвета на отвеченный вопрос в TextView
+        if (answerResults[previousId] == true) {
+            pastTextView.setBackgroundResource(R.drawable.border_for_tv_correct)
+        } else if (answerResults[previousId] == false) {
+            pastTextView.setBackgroundResource(R.drawable.border_for_tv_wrong)
+        } else {
+            pastTextView.setBackgroundResource(R.color.question_number_background)
+        }
+        previousId = index
+        pastTextView = textView
     }
 
     private fun setQuestionSettings(test: Test, numberOfQuestion: Int) {
@@ -168,6 +189,8 @@ class QuestionFragment : Fragment() {
                 optionsAdapter.answerResults = it
                 answerResults = it
             }
+
+            binding.buttonNextQuestion.isVisible = true
         }
     }
 
