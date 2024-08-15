@@ -40,8 +40,6 @@ class QuestionViewModel(
     private val _answeredQuestions = MutableLiveData<MutableList<Boolean>>().apply {
         value = mutableListOf()
     }
-    val answeredQuestions: LiveData<MutableList<Boolean>>
-        get() = _answeredQuestions
 
     private val _answerResults = MutableLiveData<Map<Int, Boolean>>()
     val answerResults: LiveData<Map<Int, Boolean>>
@@ -49,16 +47,25 @@ class QuestionViewModel(
 
 
     private val _selectedOptionsMap = mutableMapOf<Int, Int>()
-    val selectedOptionsMap: Map<Int, Int> get() = _selectedOptionsMap
+    val selectedOptionsMap: Map<Int, Int>
+        get() = _selectedOptionsMap
+
+    private val _isOptionSelectedMap = mutableMapOf<Int, Boolean>()
+    val isOptionSelectedMap: Map<Int, Boolean>
+        get() = _isOptionSelectedMap
 
     fun selectOptionForQuestion(questionId: Int, optionIndex: Int) {
         _selectedOptionsMap[questionId] = optionIndex
+        _isOptionSelectedMap[questionId] = true
     }
 
     fun getSelectedOptionForQuestion(questionId: Int): Int? {
         return _selectedOptionsMap[questionId]
     }
 
+    fun isOptionSelectedForQuestion(questionId: Int): Boolean {
+        return _isOptionSelectedMap[questionId] ?: false
+    }
     fun checkAnswer(questionId: Int, selectedAnswer: String, correctAnswer: String) {
         val isCorrect = selectedAnswer == correctAnswer
 

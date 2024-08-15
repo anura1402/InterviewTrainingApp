@@ -19,22 +19,16 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
     private var optionsList: List<String> = listOf()
     private var onItemClick: (Int) -> Unit = {}
     private var selectedItemPosition: Int = RecyclerView.NO_POSITION
-    private var isOptionSelected = false
+    private var isOptionSelectable = true
 
     var items: List<String>
         get() = optionsList
         set(value) {
-            val oldSize = optionsList.size
-            val newSize = value.size
-            //Log.d("OptionsAdapter", "Updating optionsList from size $oldSize to $newSize")
             val callback = OptionListDiffCallback(optionsList, value)
             val diffResult = DiffUtil.calculateDiff(callback)
             diffResult.dispatchUpdatesTo(this)
             optionsList = value
-            isOptionSelected = false
         }
-    var onOptionItemClickListener: ((String) -> Unit)? = null
-
 
     fun setSelectedPosition(position: Int) {
         val previousItemPosition = selectedItemPosition
@@ -42,10 +36,14 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
         notifyItemChanged(previousItemPosition) // Сбрасываем выделение с предыдущего
         notifyItemChanged(selectedItemPosition) // Применяем выделение к новому
     }
+
     fun setOnItemClickListener(listener: (Int) -> Unit) {
         onItemClick = listener
     }
 
+    fun setIsOptionSelectable(isSelectable: Boolean) {
+        isOptionSelectable = isSelectable
+    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnswerOptionViewHolder {
@@ -66,25 +64,22 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
     inner class AnswerOptionViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val tvText = view.findViewById<TextView>(R.id.answerOption)
         fun bind(position: Int) {
-            //Log.d("checkAnswer","answerResultsAdapter: $answerResults")
             val isCorrect = answerResults[currentQuestionId] == true
             itemView.setOnClickListener {
-                Log.d("checkAnswer", "isOptionSelected: $isOptionSelected")
-                if (!isOptionSelected) {
-
+                if (isOptionSelectable) {
                     // Уведомляем об изменении выделенного элемента
                     notifyItemChanged(selectedItemPosition)
                     selectedItemPosition = position
                     notifyItemChanged(selectedItemPosition)
                     onItemClick(position)
-                    isOptionSelected = true
+                    isOptionSelectable = false
                 }
             }
             val correctColor = ContextCompat.getColor(itemView.context, R.color.correct_answer)
             val wrongColor = ContextCompat.getColor(itemView.context, R.color.wrong_answer)
             itemView.setBackgroundColor(
-                if (position == selectedItemPosition&& isCorrect) correctColor
-                else if (position == selectedItemPosition&& !isCorrect) wrongColor
+                if (position == selectedItemPosition && isCorrect) correctColor
+                else if (position == selectedItemPosition && !isCorrect) wrongColor
                 else Color.WHITE // цвет по умолчанию
             )
 

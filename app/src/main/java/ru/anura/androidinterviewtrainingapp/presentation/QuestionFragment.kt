@@ -108,14 +108,7 @@ class QuestionFragment : Fragment() {
                 val textView =
                     nonNullView.findViewById<TextView>(binding.container.getChildAt(i - 1).id)
                 textView?.setOnClickListener {
-                    if (answerResults[i - 1] == null) {
-                        isAlreadyClicked = false
-                    }
-                    Log.d("checkAnswer", "answerResults[i - 1]: ${answerResults[i - 1]} isAlreadyClicked: $isAlreadyClicked")
-//                    Log.d(
-//                        "checkAnswer",
-//                        "textView: ${textView.text}  i-1: ${i - 1} previousId: $previousId answerResults: $answerResults answerResults[previousId] ${answerResults[previousId]}"
-//                    )
+                    //выставление цвета на отвеченный вопрос в TextView
                     if (answerResults[previousId] == true) {
                         pastTextView.setBackgroundResource(R.drawable.border_for_tv_correct)
                     } else if (answerResults[previousId] == false) {
@@ -123,12 +116,8 @@ class QuestionFragment : Fragment() {
                     } else {
                         pastTextView.setBackgroundResource(R.color.question_number_background)
                     }
-                    //Log.d("checkAnswer","textView: ${textView.text} previousId: $previousId i-1: ${i-1}")
-//                    if(previousId != i-1){
-//                        pastTextView.setBackgroundResource(R.color.question_number_background)
-//                    }
+                    //выставление цвета на выбранный вопрос в TextView
                     textView.setBackgroundResource(R.drawable.border_for_tv)
-
                     setQuestionSettings(test, i - 1)
 
                     previousId = i - 1
@@ -153,32 +142,33 @@ class QuestionFragment : Fragment() {
         optionsAdapter.items = (test.questions[numberOfQuestion].options)
 
 
+        // Получаем сохраненную позицию для текущего вопроса из ViewModel.
+        // Если для этого вопроса еще не был выбран ответ, устанавливаем позицию как NO_POSITION.
         val savedPosition =
             viewModel.getSelectedOptionForQuestion(numberOfQuestion) ?: RecyclerView.NO_POSITION
+        // Устанавливаем сохраненную позицию в адаптере, чтобы выделить ранее выбранный ответ.
         optionsAdapter.setSelectedPosition(savedPosition)
+        // Устанавливаем идентификатор текущего вопроса в адаптере, чтобы привязать действия к этому вопросу.
         optionsAdapter.currentQuestionId = numberOfQuestion
+        // Определяем, можно ли выбирать опцию для текущего вопроса.
+        // Если ответ уже был выбран ранее (isOptionSelectedForQuestion вернет true), выбор блокируется.
+        optionsAdapter.setIsOptionSelectable(!viewModel.isOptionSelectedForQuestion(numberOfQuestion))
 
+        optionsAdapter.setOnItemClickListener { selectedPosition ->
+            // Сохранение выбранной позиции в ViewModel
+            viewModel.selectOptionForQuestion(numberOfQuestion, selectedPosition)
 
-        Log.d("checkAnswer", "numberOfQuestion: $numberOfQuestion isAlreadyClicked: $isAlreadyClicked")
-        if (!isAlreadyClicked){
-            optionsAdapter.setOnItemClickListener { selectedPosition ->
-                // Сохранение выбранной позиции в ViewModel
-                viewModel.selectOptionForQuestion(numberOfQuestion, selectedPosition)
-                viewModel.checkAnswer(
-                    numberOfQuestion,
-                    optionsAdapter.items[selectedPosition],
-                    test.questions[numberOfQuestion].answer
-                )
-                viewModel.answerResults.observe(viewLifecycleOwner) { it ->
-                    optionsAdapter.answerResults = it
-                    answerResults = it
+            viewModel.checkAnswer(
+                numberOfQuestion,
+                optionsAdapter.items[selectedPosition],
+                test.questions[numberOfQuestion].answer
+            )
 
-
-                }
+            viewModel.answerResults.observe(viewLifecycleOwner) { it ->
+                optionsAdapter.answerResults = it
+                answerResults = it
             }
-            isAlreadyClicked = true
         }
-
     }
 
     override fun onDestroyView() {
