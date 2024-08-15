@@ -4,6 +4,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="my_light_primary">#FAF7FF</color>
     <color name="question_number_background">#E1E1E1</color>
+    <color name="question_number_background_chosen">#C8C8C8</color>
+    <color name="question_number_background_chosen_border">#9C9B9B</color>
     <color name="wrong_answer">#F6C4C0</color>
     <color name="correct_answer">#CDF4CF</color>
 </resources>

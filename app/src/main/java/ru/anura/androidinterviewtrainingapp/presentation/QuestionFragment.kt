@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,6 +34,10 @@ class QuestionFragment : Fragment() {
     private val viewModel by lazy {
         ViewModelProvider(this, viewModelByFactory)[QuestionViewModel::class.java]
     }
+    private var previousId = 0
+    private lateinit var pastTextView: TextView
+    private var answerResults: Map<Int, Boolean> = emptyMap()
+    private var isAlreadyClicked = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,12 +65,15 @@ class QuestionFragment : Fragment() {
         for (i in 1..numberOfTextViews) {
             // Создаем новый TextView
             val textView = TextView(requireActivity().application)
+            if (i == 1) {
+                pastTextView = textView
+            }
             // Настраиваем TextView
             textView.id = View.generateViewId()
             textView.text = "$i"
-            textView.textSize = 12f // размер текста
+            textView.textSize = 14f // размер текста
             textView.setBackgroundResource(R.color.question_number_background)
-            textView.setPadding(16, 10, 16, 10) // отступы
+            textView.setPadding(24, 16, 24, 16) // отступы
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -92,6 +100,7 @@ class QuestionFragment : Fragment() {
 
     private fun observeViewModel() {
         val nonNullView = requireNotNull(view)
+
         viewModel.test.observe(viewLifecycleOwner) { test ->
             createTextViews(test.countOfQuestions)
             setQuestionSettings(test, 0)
@@ -99,8 +108,34 @@ class QuestionFragment : Fragment() {
                 val textView =
                     nonNullView.findViewById<TextView>(binding.container.getChildAt(i - 1).id)
                 textView?.setOnClickListener {
+                    if (answerResults[i - 1] == null) {
+                        isAlreadyClicked = false
+                    }
+                    Log.d("checkAnswer", "answerResults[i - 1]: ${answerResults[i - 1]} isAlreadyClicked: $isAlreadyClicked")
+//                    Log.d(
+//                        "checkAnswer",
+//                        "textView: ${textView.text}  i-1: ${i - 1} previousId: $previousId answerResults: $answerResults answerResults[previousId] ${answerResults[previousId]}"
+//                    )
+                    if (answerResults[previousId] == true) {
+                        pastTextView.setBackgroundResource(R.drawable.border_for_tv_correct)
+                    } else if (answerResults[previousId] == false) {
+                        pastTextView.setBackgroundResource(R.drawable.border_for_tv_wrong)
+                    } else {
+                        pastTextView.setBackgroundResource(R.color.question_number_background)
+                    }
+                    //Log.d("checkAnswer","textView: ${textView.text} previousId: $previousId i-1: ${i-1}")
+//                    if(previousId != i-1){
+//                        pastTextView.setBackgroundResource(R.color.question_number_background)
+//                    }
+                    textView.setBackgroundResource(R.drawable.border_for_tv)
+
                     setQuestionSettings(test, i - 1)
+
+                    previousId = i - 1
+                    pastTextView = textView
+
                 }
+
             }
         }
     }
@@ -118,20 +153,32 @@ class QuestionFragment : Fragment() {
         optionsAdapter.items = (test.questions[numberOfQuestion].options)
 
 
-        val savedPosition = viewModel.getSelectedOptionForQuestion(numberOfQuestion) ?: RecyclerView.NO_POSITION
+        val savedPosition =
+            viewModel.getSelectedOptionForQuestion(numberOfQuestion) ?: RecyclerView.NO_POSITION
         optionsAdapter.setSelectedPosition(savedPosition)
         optionsAdapter.currentQuestionId = numberOfQuestion
 
 
-        optionsAdapter.setOnItemClickListener { selectedPosition ->
-            // Сохранение выбранной позиции в ViewModel
-            viewModel.selectOptionForQuestion(numberOfQuestion, selectedPosition)
-            viewModel.checkAnswer(numberOfQuestion, optionsAdapter.items[selectedPosition], test.questions[numberOfQuestion].answer)
-            viewModel.answerResults.observe(viewLifecycleOwner) { answerResults ->
-                optionsAdapter.answerResults = answerResults
+        Log.d("checkAnswer", "numberOfQuestion: $numberOfQuestion isAlreadyClicked: $isAlreadyClicked")
+        if (!isAlreadyClicked){
+            optionsAdapter.setOnItemClickListener { selectedPosition ->
+                // Сохранение выбранной позиции в ViewModel
+                viewModel.selectOptionForQuestion(numberOfQuestion, selectedPosition)
+                viewModel.checkAnswer(
+                    numberOfQuestion,
+                    optionsAdapter.items[selectedPosition],
+                    test.questions[numberOfQuestion].answer
+                )
+                viewModel.answerResults.observe(viewLifecycleOwner) { it ->
+                    optionsAdapter.answerResults = it
+                    answerResults = it
 
+
+                }
             }
+            isAlreadyClicked = true
         }
+
     }
 
     override fun onDestroyView() {

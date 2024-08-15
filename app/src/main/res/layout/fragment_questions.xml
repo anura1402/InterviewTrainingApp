@@ -9,15 +9,22 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
+<HorizontalScrollView
+    android:id="@+id/scroll_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/border"
+    android:scrollbars="none"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
         <LinearLayout
             android:id="@+id/container"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/border"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+</HorizontalScrollView>
 
         <ImageView
             android:id="@+id/questionImage"
@@ -28,17 +35,19 @@
             app:layout_constraintBottom_toTopOf="@+id/questionText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/container"
+            app:layout_constraintTop_toBottomOf="@+id/scroll_container"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/questionText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_marginEnd="20dp"
+            android:paddingStart ="10dp"
+            android:paddingEnd ="10dp"
+            android:layout_marginTop="20dp"
             android:text="@string/question_string"
             app:layout_constraintStart_toStartOf="parent"
+            android:textSize="18sp"
             app:layout_constraintTop_toBottomOf="@+id/questionImage" />
 
         <androidx.recyclerview.widget.RecyclerView

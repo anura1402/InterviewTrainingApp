@@ -26,7 +26,7 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
         set(value) {
             val oldSize = optionsList.size
             val newSize = value.size
-            Log.d("OptionsAdapter", "Updating optionsList from size $oldSize to $newSize")
+            //Log.d("OptionsAdapter", "Updating optionsList from size $oldSize to $newSize")
             val callback = OptionListDiffCallback(optionsList, value)
             val diffResult = DiffUtil.calculateDiff(callback)
             diffResult.dispatchUpdatesTo(this)
@@ -66,10 +66,12 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
     inner class AnswerOptionViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val tvText = view.findViewById<TextView>(R.id.answerOption)
         fun bind(position: Int) {
-            Log.d("checkAnswer","answerResultsAdapter: $answerResults")
+            //Log.d("checkAnswer","answerResultsAdapter: $answerResults")
             val isCorrect = answerResults[currentQuestionId] == true
             itemView.setOnClickListener {
+                Log.d("checkAnswer", "isOptionSelected: $isOptionSelected")
                 if (!isOptionSelected) {
+
                     // Уведомляем об изменении выделенного элемента
                     notifyItemChanged(selectedItemPosition)
                     selectedItemPosition = position
