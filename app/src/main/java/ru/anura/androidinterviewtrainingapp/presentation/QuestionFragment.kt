@@ -123,15 +123,18 @@ class QuestionFragment : Fragment() {
                     currentIndex = index
                 }
                 binding.buttonNextQuestion.setOnClickListener {
-
                     if (currentIndex < test.countOfQuestions - 1) {
                         currentIndex++
+
                         val nextTextView =
                             nonNullView.findViewById<TextView>(binding.container.getChildAt(currentIndex).id)
                         nextTextView.setBackgroundResource(R.drawable.border_for_tv)
+
                         setQuestionSettings(test, currentIndex)
+
                         changeTextViewBackground(currentIndex, nextTextView)
                     }
+                    binding.scrollQuestionsFragment.scrollTo(0,0)
                 }
             }
         }
