@@ -18,7 +18,7 @@
     <string name="choosing_answer">Какой-то вариант ответа</string>
     <string name="marathon_text">Марафон по всем 800 вопросам</string>
     <string name="result_text">Ваш результат</string>
-    <string name="count_text">0 ошибок, 10 вопросов</string>
+    <string name="count_text"> %s ошибок, %s вопроса(ов)</string>
     <string name="mistakes_text">МОИ ОШИБКИ</string>
     <string name="button_base">База</string>
     <string name="button_threads">RxJava / Coroutines</string>

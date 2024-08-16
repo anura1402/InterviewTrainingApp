@@ -55,7 +55,7 @@ class WelcomeFragment : Fragment() {
     private fun launchQuestionFragment(theme: Theme) {
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, QuestionFragment.newInstance(theme))
-            .addToBackStack(null)
+            .addToBackStack(QuestionFragment.NAME)
             .commit()
     }
 

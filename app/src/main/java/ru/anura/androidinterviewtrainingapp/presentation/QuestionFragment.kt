@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.anura.androidinterviewtrainingapp.R
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentQuestionsBinding
 import ru.anura.androidinterviewtrainingapp.domain.entity.Test
+import ru.anura.androidinterviewtrainingapp.domain.entity.TestResult
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.presentation.adapters.OptionsAdapter
 
@@ -38,7 +39,8 @@ class QuestionFragment : Fragment() {
     private var previousId = 0
     private lateinit var pastTextView: TextView
     private var answerResults: Map<Int, Boolean> = emptyMap()
-    private var isAlreadyClicked = false
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,28 +128,42 @@ class QuestionFragment : Fragment() {
                     binding.buttonNextQuestion.isVisible = false
                     if (currentIndex < test.countOfQuestions - 1) {
                         currentIndex++
-                        if (currentIndex==test.countOfQuestions-1) binding.buttonNextQuestion.text = "Завершить"
+                        if (currentIndex == test.countOfQuestions - 1 ) {
+                            binding.buttonNextQuestion.text = "Завершить"
+                        }
                         val nextTextView =
                             nonNullView.findViewById<TextView>(
                                 binding.container.getChildAt(
                                     currentIndex
                                 ).id
                             )
+                        scrollToTextView(nextTextView)
                         nextTextView.setBackgroundResource(R.drawable.border_for_tv)
 
                         setQuestionSettings(test, currentIndex)
 
 
                         changeTextViewBackground(currentIndex, nextTextView)
-                        Log.d("QuestionFragment", "currentIndex: $currentIndex")
 
-                    } else{
-                        launchResultFragment()
+
+                    } else {
+                        viewModel.finishTest()
+                        viewModel.testResult.observe(viewLifecycleOwner) {
+                            Log.d("TEST", "finish test: ${viewModel.testResult.value}")
+                            launchResultFragment(it)
+                        }
+
                     }
                     binding.scrollQuestionsFragment.scrollTo(0, 0)
 
                 }
             }
+        }
+    }
+
+    private fun scrollToTextView(textView: TextView) {
+        binding.scrollContainer.post {
+            binding.scrollContainer.scrollTo(textView.left, 0)
         }
     }
 
@@ -204,16 +220,19 @@ class QuestionFragment : Fragment() {
                 answerResults = it
             }
             binding.scrollQuestionsFragment.post {
-                binding.scrollQuestionsFragment.scrollTo(0, binding.scrollQuestionsFragment.getChildAt(0).height)
+                binding.scrollQuestionsFragment.scrollTo(
+                    0,
+                    binding.scrollQuestionsFragment.getChildAt(0).height
+                )
             }
 
             binding.buttonNextQuestion.isVisible = true
         }
     }
 
-    private fun launchResultFragment() {
+    private fun launchResultFragment(testResult: TestResult) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, ResultFragment.newInstance())
+            .replace(R.id.main_container, ResultFragment.newInstance(testResult))
             .addToBackStack(null)
             .commit()
     }

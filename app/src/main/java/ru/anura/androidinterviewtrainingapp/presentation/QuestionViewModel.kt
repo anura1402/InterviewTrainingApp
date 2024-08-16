@@ -16,6 +16,7 @@ import ru.anura.androidinterviewtrainingapp.domain.usecases.GenerateTestUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetQuestionByIdUseCase
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import ru.anura.androidinterviewtrainingapp.domain.entity.TestResult
 
 class QuestionViewModel(
     private val application: Application,
@@ -32,7 +33,8 @@ class QuestionViewModel(
     private val generateTestCurrentThemeUseCase = GenerateTestCurrentThemeUseCase(repository)
     private val generateTestUseCase = GenerateTestUseCase(repository)
 
-
+    private var countOfRightAnswers = 0
+    private var countOfQuestions = 0
     private var _test = MutableLiveData<Test>()
     val test: LiveData<Test>
         get() = _test
@@ -54,6 +56,15 @@ class QuestionViewModel(
     val isOptionSelectedMap: Map<Int, Boolean>
         get() = _isOptionSelectedMap
 
+    private var _testResult = MutableLiveData<TestResult>()
+    val testResult: LiveData<TestResult>
+        get() = _testResult
+
+    private var _enoughCountOfRightAnswers = MutableLiveData<Boolean>()
+    val enoughCountOfRightAnswers: LiveData<Boolean>
+        get() = _enoughCountOfRightAnswers
+
+
     fun selectOptionForQuestion(questionId: Int, optionIndex: Int) {
         _selectedOptionsMap[questionId] = optionIndex
         _isOptionSelectedMap[questionId] = true
@@ -66,6 +77,7 @@ class QuestionViewModel(
     fun isOptionSelectedForQuestion(questionId: Int): Boolean {
         return _isOptionSelectedMap[questionId] ?: false
     }
+
     fun checkAnswer(questionId: Int, selectedAnswer: String, correctAnswer: String) {
         val isCorrect = selectedAnswer == correctAnswer
 
@@ -77,7 +89,8 @@ class QuestionViewModel(
         _answerResults.value = _answerResults.value.orEmpty().toMutableMap().apply {
             put(questionId, isCorrect)
         }
-
+        if (isCorrect)
+            countOfRightAnswers++
 
     }
 
@@ -85,15 +98,25 @@ class QuestionViewModel(
         startTest()
     }
 
+    fun finishTest() {
+        _testResult.value = TestResult(
+            countOfRightAnswers,
+            countOfQuestions
+        )
+
+    }
 
     private fun startTest() {
-        generateTest(3)
+        generateTest(20)
+
     }
 
     private fun generateTest(countOfQuestions: Int) {
+        this.countOfQuestions = countOfQuestions
         viewModelScope.launch {
             _test.value = generateTestUseCase(countOfQuestions)
         }
+        //_enoughCountOfRightAnswers.value = countOfRightAnswers >= (countOfQuestions*0.85)
     }
 
 }
