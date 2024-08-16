@@ -123,6 +123,7 @@ class QuestionFragment : Fragment() {
                     currentIndex = index
                 }
                 binding.buttonNextQuestion.setOnClickListener {
+                    binding.buttonNextQuestion.isVisible = false
                     if (currentIndex < test.countOfQuestions - 1) {
                         currentIndex++
 
