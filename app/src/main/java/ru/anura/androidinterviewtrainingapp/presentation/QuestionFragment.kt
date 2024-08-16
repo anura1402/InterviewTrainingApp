@@ -126,16 +126,26 @@ class QuestionFragment : Fragment() {
                     binding.buttonNextQuestion.isVisible = false
                     if (currentIndex < test.countOfQuestions - 1) {
                         currentIndex++
-
+                        if (currentIndex==test.countOfQuestions-1) binding.buttonNextQuestion.text = "Завершить"
                         val nextTextView =
-                            nonNullView.findViewById<TextView>(binding.container.getChildAt(currentIndex).id)
+                            nonNullView.findViewById<TextView>(
+                                binding.container.getChildAt(
+                                    currentIndex
+                                ).id
+                            )
                         nextTextView.setBackgroundResource(R.drawable.border_for_tv)
 
                         setQuestionSettings(test, currentIndex)
 
+
                         changeTextViewBackground(currentIndex, nextTextView)
+                        Log.d("QuestionFragment", "currentIndex: $currentIndex")
+
+                    } else{
+                        launchResultFragment()
                     }
-                    binding.scrollQuestionsFragment.scrollTo(0,0)
+                    binding.scrollQuestionsFragment.scrollTo(0, 0)
+
                 }
             }
         }
@@ -193,9 +203,19 @@ class QuestionFragment : Fragment() {
                 optionsAdapter.answerResults = it
                 answerResults = it
             }
+            binding.scrollQuestionsFragment.post {
+                binding.scrollQuestionsFragment.scrollTo(0, binding.scrollQuestionsFragment.getChildAt(0).height)
+            }
 
             binding.buttonNextQuestion.isVisible = true
         }
+    }
+
+    private fun launchResultFragment() {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, ResultFragment.newInstance())
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {

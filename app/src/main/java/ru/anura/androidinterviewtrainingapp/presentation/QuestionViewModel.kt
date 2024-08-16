@@ -87,7 +87,7 @@ class QuestionViewModel(
 
 
     private fun startTest() {
-        generateTest(9)
+        generateTest(3)
     }
 
     private fun generateTest(countOfQuestions: Int) {

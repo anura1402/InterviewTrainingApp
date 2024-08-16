@@ -12,10 +12,14 @@
     <string name="question_string">Здесь будет текста вопроса</string>
     <string name="theme_string">Здесь будет выбранная тема</string>
     <string name="button_start">Начать тестирование</string>
+    <string name="button_return">Вернуться на главный экран</string>
     <string name="button_next_question">Следующий вопрос</string>
     <string name="choosing_theme">Какая-то тема для изучения</string>
     <string name="choosing_answer">Какой-то вариант ответа</string>
     <string name="marathon_text">Марафон по всем 800 вопросам</string>
+    <string name="result_text">Ваш результат</string>
+    <string name="count_text">0 ошибок, 10 вопросов</string>
+    <string name="mistakes_text">МОИ ОШИБКИ</string>
     <string name="button_base">База</string>
     <string name="button_threads">RxJava / Coroutines</string>
     <string name="button_android">Android</string>
