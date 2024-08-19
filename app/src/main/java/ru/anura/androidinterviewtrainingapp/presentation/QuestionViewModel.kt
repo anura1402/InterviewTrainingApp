@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ru.anura.androidinterviewtrainingapp.data.InterviewRepositoryImpl
-import ru.anura.androidinterviewtrainingapp.domain.entity.Question
 import ru.anura.androidinterviewtrainingapp.domain.entity.Test
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.domain.usecases.ChangeIsCorrectUseCase
@@ -39,30 +38,24 @@ class QuestionViewModel(
     val test: LiveData<Test>
         get() = _test
 
-    private val _answeredQuestions = MutableLiveData<MutableList<Boolean>>().apply {
-        value = mutableListOf()
-    }
-
     private val _answerResults = MutableLiveData<Map<Int, Boolean>>()
     val answerResults: LiveData<Map<Int, Boolean>>
         get() = _answerResults
 
 
     private val _selectedOptionsMap = mutableMapOf<Int, Int>()
-    val selectedOptionsMap: Map<Int, Int>
-        get() = _selectedOptionsMap
-
     private val _isOptionSelectedMap = mutableMapOf<Int, Boolean>()
-    val isOptionSelectedMap: Map<Int, Boolean>
-        get() = _isOptionSelectedMap
 
     private var _testResult = MutableLiveData<TestResult>()
     val testResult: LiveData<TestResult>
         get() = _testResult
 
-    private var _enoughCountOfRightAnswers = MutableLiveData<Boolean>()
-    val enoughCountOfRightAnswers: LiveData<Boolean>
-        get() = _enoughCountOfRightAnswers
+    private val _clickedTextViewId = MutableLiveData<Int>()
+    val clickedTextViewId: LiveData<Int> get() = _clickedTextViewId
+
+    private val _clickedButtonOnQuestionId = MutableLiveData<Int>()
+    val clickedButtonOnQuestionId: LiveData<Int> get() = _clickedButtonOnQuestionId
+
 
 
     fun selectOptionForQuestion(questionId: Int, optionIndex: Int) {
@@ -78,6 +71,16 @@ class QuestionViewModel(
         return _isOptionSelectedMap[questionId] ?: false
     }
 
+
+    fun onTextViewClicked(index: Int){
+        _clickedTextViewId.value = index
+        Log.d("check", "_clickedTextId: ${_clickedTextViewId.value}")
+    }
+
+    fun onButtonClicked(index: Int){
+        _clickedButtonOnQuestionId.value = index
+        Log.d("check", "_clickedButtonOnQuestionId: ${_clickedButtonOnQuestionId.value}")
+    }
     fun checkAnswer(questionId: Int, selectedAnswer: String, correctAnswer: String) {
         val isCorrect = selectedAnswer == correctAnswer
 
@@ -89,9 +92,31 @@ class QuestionViewModel(
         _answerResults.value = _answerResults.value.orEmpty().toMutableMap().apply {
             put(questionId, isCorrect)
         }
-        if (isCorrect)
+        if (isCorrect) {
             countOfRightAnswers++
+            //changeIsCorrect(questionId)
+        }
+    }
 
+    private fun changeIsCorrect(questionId:Int) {
+        // Получаем текущий объект Test из LiveData
+        val currentTest = _test.value
+
+        // Находим вопрос, который нужно обновить
+        val updatedQuestions = currentTest?.questions?.map { question ->
+            if (question.id == questionId) {
+                // Создаём копию вопроса с изменённым значением isCorrectAnswer
+                question.copy(isCorrectAnswer = false)
+            } else {
+                question
+            }
+        }
+
+        // Если вопросы успешно обновлены, создаём новый объект Test с изменёнными вопросами
+        if (updatedQuestions != null) {
+            val updatedTest = currentTest.copy(questions = updatedQuestions)
+            _test.value = updatedTest // Сохраняем обновлённый объект Test в LiveData
+        }
     }
 
     init {
@@ -107,7 +132,7 @@ class QuestionViewModel(
     }
 
     private fun startTest() {
-        generateTest(20)
+        generateTest(5)
 
     }
 
