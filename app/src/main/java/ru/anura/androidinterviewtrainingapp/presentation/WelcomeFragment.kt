@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import ru.anura.androidinterviewtrainingapp.R
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentWelcomeBinding
+import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 
 class WelcomeFragment : Fragment() {
@@ -27,16 +28,16 @@ class WelcomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         with(binding){
             interviewButton.setOnClickListener {
-                launchQuestionFragment(Theme.ALL)
+                launchQuestionFragment(Theme.ALL, Mode.INTERVIEW)
             }
             themeButton.setOnClickListener {
                 launchThemesFragment()
             }
             mistakeButton.setOnClickListener {
-                launchQuestionFragment(Theme.ALL)
+                launchQuestionFragment(Theme.ALL, Mode.MISTAKES)
             }
             favButton.setOnClickListener {
-                launchQuestionFragment(Theme.ALL)
+                launchQuestionFragment(Theme.ALL, Mode.FAVORITES)
             }
             marathonButton.setOnClickListener {
                 launchMarathonFragment()
@@ -52,9 +53,9 @@ class WelcomeFragment : Fragment() {
             .commit()
     }
 
-    private fun launchQuestionFragment(theme: Theme) {
+    private fun launchQuestionFragment(theme: Theme, mode: Mode) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, QuestionFragment.newInstance(theme))
+            .replace(R.id.main_container, QuestionFragment.newInstance(theme, mode))
             .addToBackStack(QuestionFragment.NAME)
             .commit()
     }

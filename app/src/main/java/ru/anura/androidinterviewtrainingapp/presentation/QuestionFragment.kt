@@ -1,6 +1,7 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.anura.androidinterviewtrainingapp.R
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentQuestionsBinding
+import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
 import ru.anura.androidinterviewtrainingapp.domain.entity.Test
 import ru.anura.androidinterviewtrainingapp.domain.entity.TestResult
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
@@ -21,7 +23,7 @@ import ru.anura.androidinterviewtrainingapp.presentation.adapters.OptionsAdapter
 class QuestionFragment : Fragment() {
 
     private lateinit var theme: Theme
-
+    private lateinit var mode: Mode
     private lateinit var optionsAdapter: OptionsAdapter
 
     private var _binding: FragmentQuestionsBinding? = null
@@ -57,13 +59,17 @@ class QuestionFragment : Fragment() {
         requireArguments().getParcelable<Theme>(KEY_THEME)?.let {
             theme = it
         }
+        requireArguments().getParcelable<Mode>(KEY_MODE)?.let {
+            mode = it
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
+        viewModel.startTest(mode)
         observeViewModel()
-
+        Log.d("check", "mode: $mode")
 
     }
 
@@ -77,7 +83,13 @@ class QuestionFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.test.observe(viewLifecycleOwner) { it ->
             test = it
-            updateUI()
+            if (test.countOfQuestions != 0) {
+                Log.d("check", "test: $it")
+                updateUI()
+            }else{
+                launchNothingContainer()
+            }
+
         }
         viewModel.answerResults.observe(viewLifecycleOwner) { it ->
             optionsAdapter.answerResults = it
@@ -85,13 +97,13 @@ class QuestionFragment : Fragment() {
         }
         viewModel.testResult.observe(viewLifecycleOwner) { testResult ->
             launchResultFragment(testResult)
+            Log.d("check", "test: $testResult")
         }
     }
 
     private fun updateUI() {
         var currentIndex = 0
         createTextViews(test.countOfQuestions)
-
         displayQuestion(test, 0)
         viewModel.clickedTextViewId.observe(viewLifecycleOwner) {
             displayQuestion(test, it)
@@ -190,11 +202,13 @@ class QuestionFragment : Fragment() {
 
         setOptionsAdapterSettings(numberOfQuestion, test)
 
-        if (numberOfQuestion == test.countOfQuestions - 1) {
-            binding.buttonNextQuestion.text = "Завершить"
-        }
+
 
         binding.buttonNextQuestion.isVisible = true
+        if (numberOfQuestion == test.countOfQuestions - 1) {
+            binding.buttonNextQuestion.text = "Завершить"
+            Log.d("check", "last test $test")
+        }
 
     }
 
@@ -241,6 +255,12 @@ class QuestionFragment : Fragment() {
             .addToBackStack(null)
             .commit()
     }
+    private fun launchNothingContainer(){
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, NothingFragment.newInstance())
+            .addToBackStack(null)
+            .commit()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -250,10 +270,12 @@ class QuestionFragment : Fragment() {
     companion object {
         private const val KEY_THEME = "theme"
         const val NAME = "QuestionFragment"
-        fun newInstance(theme: Theme): QuestionFragment {
+        private const val KEY_MODE = "mode"
+        fun newInstance(theme: Theme, mode:Mode): QuestionFragment {
             return QuestionFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(KEY_THEME, theme)
+                    putSerializable(KEY_MODE, mode)
                 }
             }
         }

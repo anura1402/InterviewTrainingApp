@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import ru.anura.androidinterviewtrainingapp.data.InterviewRepositoryImpl
 import ru.anura.androidinterviewtrainingapp.domain.entity.Test
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
@@ -15,7 +16,11 @@ import ru.anura.androidinterviewtrainingapp.domain.usecases.GenerateTestUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetQuestionByIdUseCase
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
 import ru.anura.androidinterviewtrainingapp.domain.entity.TestResult
+import ru.anura.androidinterviewtrainingapp.domain.usecases.GetCountOfQuestionsUseCase
+import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithFavQUseCase
+import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithWrongQUseCase
 
 class QuestionViewModel(
     private val application: Application,
@@ -26,14 +31,19 @@ class QuestionViewModel(
     private val changeIsCorrectUseCase = ChangeIsCorrectUseCase(repository)
     private val changeIsFavUseCase = ChangeIsFavUseCase(repository)
 
-    //    private val generateQuestionsUseCase = GenerateQuestionsUseCase(repository)
-//    private val generateQuestionsCurrentThemeUseCase = GenerateQuestionsCurrentThemeUseCase(repository)
-    private val getQuestionByIdUseCase = GetQuestionByIdUseCase(repository)
     private val generateTestCurrentThemeUseCase = GenerateTestCurrentThemeUseCase(repository)
     private val generateTestUseCase = GenerateTestUseCase(repository)
+    private val getTestWithWrongQUseCase = GetTestWithWrongQUseCase(repository)
+    private val getTestWithFavQUseCase = GetTestWithFavQUseCase(repository)
+    private val getCountOfQuestionsUseCase = GetCountOfQuestionsUseCase(repository)
 
     private var countOfRightAnswers = 0
     private var countOfQuestions = 0
+    private val allCountOfQuestions by lazy {
+        viewModelScope.launch {
+            getCountOfQuestionsUseCase()
+        }
+    }
     private var _test = MutableLiveData<Test>()
     val test: LiveData<Test>
         get() = _test
@@ -56,6 +66,7 @@ class QuestionViewModel(
     private val _clickedButtonOnQuestionId = MutableLiveData<Int>()
     val clickedButtonOnQuestionId: LiveData<Int> get() = _clickedButtonOnQuestionId
 
+    private val questionIdsFromDB = mutableListOf<Int>()
 
 
     fun selectOptionForQuestion(questionId: Int, optionIndex: Int) {
@@ -71,16 +82,14 @@ class QuestionViewModel(
         return _isOptionSelectedMap[questionId] ?: false
     }
 
-
-    fun onTextViewClicked(index: Int){
+    fun onTextViewClicked(index: Int) {
         _clickedTextViewId.value = index
-        Log.d("check", "_clickedTextId: ${_clickedTextViewId.value}")
     }
 
-    fun onButtonClicked(index: Int){
+    fun onButtonClicked(index: Int) {
         _clickedButtonOnQuestionId.value = index
-        Log.d("check", "_clickedButtonOnQuestionId: ${_clickedButtonOnQuestionId.value}")
     }
+
     fun checkAnswer(questionId: Int, selectedAnswer: String, correctAnswer: String) {
         val isCorrect = selectedAnswer == correctAnswer
 
@@ -94,54 +103,51 @@ class QuestionViewModel(
         }
         if (isCorrect) {
             countOfRightAnswers++
-            //changeIsCorrect(questionId)
+            changeIsCorrect(questionId, true)
+            Log.d("check", "isCorrect")
+        } else {
+            changeIsCorrect(questionId, false)
+            Log.d("check", "isWrong")
+        }
+    }
+    private fun changeIsCorrect(questionId: Int, isCorrect: Boolean) {
+        viewModelScope.launch {
+            changeIsCorrectUseCase(questionIdsFromDB[questionId], isCorrect)
         }
     }
 
-    private fun changeIsCorrect(questionId:Int) {
-        // Получаем текущий объект Test из LiveData
-        val currentTest = _test.value
-
-        // Находим вопрос, который нужно обновить
-        val updatedQuestions = currentTest?.questions?.map { question ->
-            if (question.id == questionId) {
-                // Создаём копию вопроса с изменённым значением isCorrectAnswer
-                question.copy(isCorrectAnswer = false)
-            } else {
-                question
-            }
-        }
-
-        // Если вопросы успешно обновлены, создаём новый объект Test с изменёнными вопросами
-        if (updatedQuestions != null) {
-            val updatedTest = currentTest.copy(questions = updatedQuestions)
-            _test.value = updatedTest // Сохраняем обновлённый объект Test в LiveData
-        }
-    }
-
-    init {
-        startTest()
-    }
 
     fun finishTest() {
         _testResult.value = TestResult(
             countOfRightAnswers,
-            countOfQuestions
+            test.value?.countOfQuestions ?: 0
         )
 
     }
 
-    private fun startTest() {
-        generateTest(5)
-
-    }
-
-    private fun generateTest(countOfQuestions: Int) {
-        this.countOfQuestions = countOfQuestions
-        viewModelScope.launch {
-            _test.value = generateTestUseCase(countOfQuestions)
+    fun startTest(mode: Mode) {
+        viewModelScope.launch{
+            generateTest(2, mode)
         }
-        //_enoughCountOfRightAnswers.value = countOfRightAnswers >= (countOfQuestions*0.85)
     }
 
+    private suspend fun generateTest(countOfQuestions: Int, mode: Mode) {
+        Log.d("check", "modeFromFunc: $mode")
+        this.countOfQuestions = countOfQuestions
+        val job = viewModelScope.launch {
+            _test.value = when (mode) {
+                Mode.INTERVIEW -> generateTestUseCase(countOfQuestions)
+                Mode.MISTAKES -> getTestWithWrongQUseCase()
+                Mode.FAVORITES -> getTestWithFavQUseCase()
+            }
+        }
+        job.join()
+        _test.value?.let { testValue ->
+            for (i in 0 until testValue.countOfQuestions) {
+                questionIdsFromDB.add(testValue.questions[i].id)
+            }
+        }
+        Log.d("check", "test: ${test.value}")
+        Log.d("check", "questionIdsFromDB: $questionIdsFromDB")
+    }
 }

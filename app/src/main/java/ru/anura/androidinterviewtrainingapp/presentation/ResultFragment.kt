@@ -11,7 +11,9 @@ import com.bumptech.glide.Glide
 import ru.anura.androidinterviewtrainingapp.R
 
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentResultBinding
+import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
 import ru.anura.androidinterviewtrainingapp.domain.entity.TestResult
+import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 
 class ResultFragment : Fragment() {
     private lateinit var testResult: TestResult
@@ -77,7 +79,12 @@ class ResultFragment : Fragment() {
         }
         binding.tvResult.text = resultText
         binding.tvCounts.text = countText
-
+        binding.buttonReturn.setOnClickListener {
+            retryTest()
+        }
+        binding.buttonMistakes.setOnClickListener {
+            launchQuestionFragment(Theme.ALL, Mode.MISTAKES)
+        }
     }
 
     private fun parseArgs() {
@@ -91,6 +98,13 @@ class ResultFragment : Fragment() {
             FragmentManager.POP_BACK_STACK_INCLUSIVE
         )
 
+    }
+
+    private fun launchQuestionFragment(theme: Theme, mode: Mode){
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, QuestionFragment.newInstance(theme, mode))
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {

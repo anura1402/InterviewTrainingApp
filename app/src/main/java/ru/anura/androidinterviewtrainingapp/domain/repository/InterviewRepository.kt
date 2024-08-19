@@ -15,4 +15,9 @@ interface InterviewRepository {
 
     suspend fun generateTestCurrentTheme(theme:Theme,countOfQuestions:Int): Test
     suspend fun generateTest(countOfQuestions:Int):Test
+
+    suspend fun getTestWithWrongQ(): Test
+    suspend fun getTestWithFavQ(): Test
+
+    suspend fun getCountOfQuestions(): Int
 }

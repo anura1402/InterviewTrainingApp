@@ -26,6 +26,10 @@ class QuestionMapper {
         isFavorite = questionDBModel.isFavorite
     )
 
+    fun mapListDbModelToListEntity(list: List<QuestionDBModel>) = list.map {
+        mapDbModelToEntity(it)
+    }
+
 
 //    fun mapListDbModelToListEntity(list: List<ShopItemDBModel>) = list.map {
 //        mapDbModelToEntity(it)

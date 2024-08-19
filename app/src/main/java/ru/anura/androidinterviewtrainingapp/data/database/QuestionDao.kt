@@ -49,10 +49,14 @@ interface QuestionDao {
     @Query("UPDATE questionTable SET isCorrectAnswer = :isCorrect WHERE question_id = :id")
     suspend fun changeIsCorrect(id: Int,isCorrect:Boolean)
 
-
-//    suspend fun getTheme() {
-//        TODO("Not yet implemented")
-//    }
     @Query("SELECT * FROM questionTable WHERE question_theme IN (:themes) ORDER BY RANDOM() LIMIT :num")
      suspend fun getQuestions(themes: List<String>,num:Int): List<QuestionDBModel>
+
+    @Query("SELECT * FROM questionTable WHERE isCorrectAnswer = 0")
+    suspend fun getWrongQuestions(): List<QuestionDBModel>
+    @Query("SELECT * FROM questionTable WHERE isFavorite = 1")
+    suspend fun getFavQuestions(): List<QuestionDBModel>
+
+    @Query("SELECT COUNT(*) FROM questionTable")
+    suspend fun getCountOfQuestions(): Int
 }
