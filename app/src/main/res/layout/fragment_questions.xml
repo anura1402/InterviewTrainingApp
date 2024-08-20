@@ -2,30 +2,32 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll_questions_fragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/scroll_questions_fragment">
+    android:layout_height="match_parent">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-<HorizontalScrollView
-    android:id="@+id/scroll_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/border"
-    android:scrollbars="none"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
-        <LinearLayout
-            android:id="@+id/container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
+
+        <HorizontalScrollView
+            android:id="@+id/scroll_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/border"
+            android:scrollbars="none"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-</HorizontalScrollView>
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </HorizontalScrollView>
 
         <ImageView
             android:id="@+id/questionImage"
@@ -43,12 +45,12 @@
             android:id="@+id/questionText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart ="10dp"
-            android:paddingEnd ="10dp"
             android:layout_marginTop="20dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:text="@string/question_string"
-            app:layout_constraintStart_toStartOf="parent"
             android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/questionImage" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -57,21 +59,34 @@
             android:layout_height="match_parent"
             android:layout_margin="20dp"
             android:padding="10dp"
-            app:layout_constraintTop_toBottomOf="@+id/questionText"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/questionText" />
+
+        <TextView
+            android:id="@+id/fav_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/add_to_fav"
+            app:layout_constraintTop_toBottomOf="@+id/rvOptions"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="10dp"
+            android:drawablePadding="10dp"
+            app:drawableStartCompat="@drawable/add_star_resized" />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/button_next_question"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@drawable/main_buttons_design"
             android:text="@string/button_next_question"
             android:visibility="invisible"
-            android:background="@drawable/main_buttons_design"
-            app:layout_constraintTop_toBottomOf="@+id/rvOptions"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="20dp"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fav_tv" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

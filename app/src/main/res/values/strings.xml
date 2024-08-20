@@ -27,4 +27,6 @@
     <string name="button_sql">SQL</string>
     <string name="button_kotlin">Kotlin</string>
     <string name="button_java">Java</string>
+    <string name="add_to_fav">Добавить в избранное</string>
+    <string name="delete_from_fav">Удалить из избранного</string>
 </resources>

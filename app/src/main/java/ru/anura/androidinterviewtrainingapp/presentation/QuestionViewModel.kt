@@ -52,6 +52,9 @@ class QuestionViewModel(
     val answerResults: LiveData<Map<Int, Boolean>>
         get() = _answerResults
 
+    private val _favList = MutableLiveData<Map<Int, Boolean>>()
+    val favList: LiveData<Map<Int, Boolean>>
+        get() = _favList
 
     private val _selectedOptionsMap = mutableMapOf<Int, Int>()
     private val _isOptionSelectedMap = mutableMapOf<Int, Boolean>()
@@ -65,6 +68,9 @@ class QuestionViewModel(
 
     private val _clickedButtonOnQuestionId = MutableLiveData<Int>()
     val clickedButtonOnQuestionId: LiveData<Int> get() = _clickedButtonOnQuestionId
+
+    private val _clickedFavTextView = MutableLiveData<Int>()
+    val clickedFavTextView: LiveData<Int> get() = _clickedFavTextView
 
     private val questionIdsFromDB = mutableListOf<Int>()
 
@@ -90,6 +96,28 @@ class QuestionViewModel(
         _clickedButtonOnQuestionId.value = index
     }
 
+    fun isFavTextViewClicked(index: Int) {
+        _clickedFavTextView.value = index
+    }
+
+    fun changeFavList(questionId: Int, isFav: Boolean) {
+        viewModelScope.launch {
+            changeIsFavUseCase(questionIdsFromDB[questionId], isFav)
+        }
+        if (_clickedFavTextView.value == questionId) {
+            if (_favList.value?.get(questionId) == true) {
+                _favList.value = _favList.value.orEmpty().toMutableMap().apply {
+                    put(questionId, false)
+                }
+            } else{
+                _favList.value = _favList.value.orEmpty().toMutableMap().apply {
+                    put(questionId, true)
+                }
+            }
+        }
+
+    }
+
     fun checkAnswer(questionId: Int, selectedAnswer: String, correctAnswer: String) {
         val isCorrect = selectedAnswer == correctAnswer
 
@@ -104,12 +132,11 @@ class QuestionViewModel(
         if (isCorrect) {
             countOfRightAnswers++
             changeIsCorrect(questionId, true)
-            Log.d("check", "isCorrect")
         } else {
             changeIsCorrect(questionId, false)
-            Log.d("check", "isWrong")
         }
     }
+
     private fun changeIsCorrect(questionId: Int, isCorrect: Boolean) {
         viewModelScope.launch {
             changeIsCorrectUseCase(questionIdsFromDB[questionId], isCorrect)
@@ -126,13 +153,12 @@ class QuestionViewModel(
     }
 
     fun startTest(mode: Mode) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             generateTest(2, mode)
         }
     }
 
     private suspend fun generateTest(countOfQuestions: Int, mode: Mode) {
-        Log.d("check", "modeFromFunc: $mode")
         this.countOfQuestions = countOfQuestions
         val job = viewModelScope.launch {
             _test.value = when (mode) {
@@ -145,9 +171,15 @@ class QuestionViewModel(
         _test.value?.let { testValue ->
             for (i in 0 until testValue.countOfQuestions) {
                 questionIdsFromDB.add(testValue.questions[i].id)
+                if (testValue.questions[i].isFavorite) {
+                    _favList.value = _favList.value.orEmpty().toMutableMap().apply {
+                        put(i, true)
+                    }
+                } else
+                    _favList.value = _favList.value.orEmpty().toMutableMap().apply {
+                        put(i, false)
+                    }
             }
         }
-        Log.d("check", "test: ${test.value}")
-        Log.d("check", "questionIdsFromDB: $questionIdsFromDB")
     }
 }

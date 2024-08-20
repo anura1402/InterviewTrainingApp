@@ -1,5 +1,6 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -69,7 +71,6 @@ class QuestionFragment : Fragment() {
         setupRecyclerView()
         viewModel.startTest(mode)
         observeViewModel()
-        Log.d("check", "mode: $mode")
 
     }
 
@@ -86,10 +87,9 @@ class QuestionFragment : Fragment() {
             if (test.countOfQuestions != 0) {
                 Log.d("check", "test: $it")
                 updateUI()
-            }else{
+            } else {
                 launchNothingContainer()
             }
-
         }
         viewModel.answerResults.observe(viewLifecycleOwner) { it ->
             optionsAdapter.answerResults = it
@@ -97,7 +97,6 @@ class QuestionFragment : Fragment() {
         }
         viewModel.testResult.observe(viewLifecycleOwner) { testResult ->
             launchResultFragment(testResult)
-            Log.d("check", "test: $testResult")
         }
     }
 
@@ -105,6 +104,7 @@ class QuestionFragment : Fragment() {
         var currentIndex = 0
         createTextViews(test.countOfQuestions)
         displayQuestion(test, 0)
+
         viewModel.clickedTextViewId.observe(viewLifecycleOwner) {
             displayQuestion(test, it)
             currentIndex = it
@@ -120,9 +120,33 @@ class QuestionFragment : Fragment() {
             } else {
                 viewModel.finishTest()
             }
+        }
+        binding.favTv.setOnClickListener {
+            viewModel.isFavTextViewClicked(currentIndex)
+        }
+        viewModel.clickedFavTextView.observe(viewLifecycleOwner) {
+            if (binding.favTv.text == getString(R.string.add_to_fav)) {
+                viewModel.changeFavList(it, true)
+                updateFavTextView(true)
+            } else {
+                viewModel.changeFavList(it, false)
+                updateFavTextView(false)
+            }
 
         }
+    }
 
+    private fun updateFavTextView(isFavorite: Boolean) {
+        if (isFavorite) {
+            binding.favTv.text = getString(R.string.delete_from_fav)
+            val drawable =
+                ContextCompat.getDrawable(requireActivity(), R.drawable.full_star_resized)
+            binding.favTv.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+        } else {
+            binding.favTv.text = getString(R.string.add_to_fav)
+            val drawable = ContextCompat.getDrawable(requireActivity(), R.drawable.add_star_resized)
+            binding.favTv.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+        }
     }
 
     private fun highlightTextView(index: Int) {
@@ -202,12 +226,17 @@ class QuestionFragment : Fragment() {
 
         setOptionsAdapterSettings(numberOfQuestion, test)
 
-
+        viewModel.favList.observe(viewLifecycleOwner) {
+            if (viewModel.favList.value?.get(numberOfQuestion) == true) {
+                updateFavTextView(true)
+            } else {
+                updateFavTextView(false)
+            }
+        }
 
         binding.buttonNextQuestion.isVisible = true
         if (numberOfQuestion == test.countOfQuestions - 1) {
             binding.buttonNextQuestion.text = "Завершить"
-            Log.d("check", "last test $test")
         }
 
     }
@@ -255,7 +284,8 @@ class QuestionFragment : Fragment() {
             .addToBackStack(null)
             .commit()
     }
-    private fun launchNothingContainer(){
+
+    private fun launchNothingContainer() {
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, NothingFragment.newInstance())
             .addToBackStack(null)
@@ -271,7 +301,7 @@ class QuestionFragment : Fragment() {
         private const val KEY_THEME = "theme"
         const val NAME = "QuestionFragment"
         private const val KEY_MODE = "mode"
-        fun newInstance(theme: Theme, mode:Mode): QuestionFragment {
+        fun newInstance(theme: Theme, mode: Mode): QuestionFragment {
             return QuestionFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(KEY_THEME, theme)
