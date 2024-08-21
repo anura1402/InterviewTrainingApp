@@ -10,5 +10,6 @@ data class Question(
     val options: List<String>,
     val answer: String,
     val isCorrectAnswer: Boolean,
-    val isFavorite: Boolean
+    val isFavorite: Boolean,
+    val explanation: String
 )

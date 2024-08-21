@@ -162,11 +162,6 @@ class QuestionFragment : Fragment() {
         updateTextViewBackground(index, nextTextView)
     }
 
-    private fun scrollToTextView(textView: TextView) {
-        binding.scrollContainer.post {
-            binding.scrollContainer.scrollTo(textView.left, 0)
-        }
-    }
 
     private fun createTextViews(numberOfTextViews: Int) {
         val container: LinearLayout = binding.container
@@ -213,6 +208,7 @@ class QuestionFragment : Fragment() {
     }
 
     private fun displayQuestion(test: Test, numberOfQuestion: Int) {
+        binding.explanationTv.isVisible = false
         scrollToQuestionPosition(0, 0)
         binding.questionText.text = test.questions[numberOfQuestion].text
         val imageName = "example"
@@ -263,6 +259,11 @@ class QuestionFragment : Fragment() {
                     optionsAdapter.items[selectedPosition],
                     test.questions[numberOfQuestion].answer
                 )
+                viewModel.explanation.observe(viewLifecycleOwner) {
+                    binding.explanationTv.isVisible = true
+                    binding.explanationTv.text = it
+                }
+
                 scrollToQuestionPosition(
                     0,
                     binding.scrollQuestionsFragment.getChildAt(0).height
@@ -275,6 +276,12 @@ class QuestionFragment : Fragment() {
     private fun scrollToQuestionPosition(x: Int, y: Int) {
         binding.scrollQuestionsFragment.post {
             binding.scrollQuestionsFragment.scrollTo(x, y)
+        }
+    }
+
+    private fun scrollToTextView(textView: TextView) {
+        binding.scrollContainer.post {
+            binding.scrollContainer.scrollTo(textView.left, 0)
         }
     }
 

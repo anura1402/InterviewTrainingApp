@@ -71,6 +71,8 @@ class QuestionViewModel(
 
     private val _clickedFavTextView = MutableLiveData<Int>()
     val clickedFavTextView: LiveData<Int> get() = _clickedFavTextView
+    private val _explanation = MutableLiveData<String>()
+    val explanation: LiveData<String> get() = _explanation
 
     private val questionIdsFromDB = mutableListOf<Int>()
 
@@ -109,7 +111,7 @@ class QuestionViewModel(
                 _favList.value = _favList.value.orEmpty().toMutableMap().apply {
                     put(questionId, false)
                 }
-            } else{
+            } else {
                 _favList.value = _favList.value.orEmpty().toMutableMap().apply {
                     put(questionId, true)
                 }
@@ -134,6 +136,7 @@ class QuestionViewModel(
             changeIsCorrect(questionId, true)
         } else {
             changeIsCorrect(questionId, false)
+            _explanation.value = _test.value?.questions?.get(questionId)?.explanation
         }
     }
 

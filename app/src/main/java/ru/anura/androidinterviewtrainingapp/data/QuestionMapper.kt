@@ -12,7 +12,8 @@ class QuestionMapper {
         answer = question.answer,
         theme = question.theme,
         isCorrectAnswer = question.isCorrectAnswer,
-        isFavorite = question.isFavorite
+        isFavorite = question.isFavorite,
+        explanation = question.explanation
         )
 
     fun mapDbModelToEntity(questionDBModel: QuestionDBModel) = Question(
@@ -23,7 +24,8 @@ class QuestionMapper {
         answer = questionDBModel.answer,
         theme = questionDBModel.theme,
         isCorrectAnswer = questionDBModel.isCorrectAnswer,
-        isFavorite = questionDBModel.isFavorite
+        isFavorite = questionDBModel.isFavorite,
+        explanation = questionDBModel.explanation
     )
 
     fun mapListDbModelToListEntity(list: List<QuestionDBModel>) = list.map {

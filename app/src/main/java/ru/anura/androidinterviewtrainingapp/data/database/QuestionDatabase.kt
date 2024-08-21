@@ -9,9 +9,9 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [QuestionDBModel::class], version = 3, exportSchema = false)
+@Database(entities = [QuestionDBModel::class], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)
-abstract class QuestionDatabase: RoomDatabase() {
+abstract class QuestionDatabase : RoomDatabase() {
     abstract fun questionDao(): QuestionDao
 
     companion object {
@@ -22,13 +22,14 @@ abstract class QuestionDatabase: RoomDatabase() {
         private val LOCK = Any()
         private const val DB_NAME = "question_database.db"
 
-        val MIGRATION_1_2 = object : Migration(1, 2) {
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // Удаление всех данных из таблицы
                 db.execSQL("DELETE FROM questionTable")
 
                 // Вставка новых данных
-                db.execSQL("""
+                db.execSQL(
+                    """
             INSERT INTO questionTable (question_text, question_image, question_options, question_answer, question_theme, isCorrectAnswer, isFavorite)
             VALUES
             ('Какое значение по умолчанию у переменной типа boolean в Java?', '', '["true", "false"]', 'false', 'JAVA', 1, 0),
@@ -51,10 +52,11 @@ abstract class QuestionDatabase: RoomDatabase() {
             ('Что возвращает SQL-запрос `SELECT COUNT(*) FROM table_name;`?', '', '["Общее количество строк", "Общее количество столбцов"]', 'Общее количество строк', 'SQL', 1, 0),
             ('Что такое Intent в Android?', '', '["Связь между компонентами", "Доступ к сетевым ресурсам"]', 'Связь между компонентами', 'ANDROID', 1, 0),
             ('Что делает метод `onCreate` в Activity Android?', '', '["Инициализация компонентов активности", "Обработка ввода пользователя"]', 'Инициализация компонентов активности', 'ANDROID', 1, 0)
-        """)
+        """
+                )
             }
         }
-        val MIGRATION_2_3 = object : Migration(2, 3) {
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // Удаление всех данных из таблицы
                 db.execSQL(
@@ -63,6 +65,13 @@ abstract class QuestionDatabase: RoomDatabase() {
                 )
             }
         }
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Добавление нового столбца в существующую таблицу
+                db.execSQL("ALTER TABLE questionTable ADD COLUMN question_explanation TEXT NOT NULL DEFAULT 'text'")
+            }
+        }
+
 
         fun getInstance(application: Application): QuestionDatabase {
             //Если не null, то сразу возвращаем значение
@@ -80,7 +89,7 @@ abstract class QuestionDatabase: RoomDatabase() {
                     QuestionDatabase::class.java,
                     DB_NAME
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .createFromAsset("databases/question_database.db")
                     .build()
                 Log.d("QuestionDatabase", "База данных успешно загружена.")

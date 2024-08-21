@@ -29,4 +29,5 @@
     <string name="button_java">Java</string>
     <string name="add_to_fav">Добавить в избранное</string>
     <string name="delete_from_fav">Удалить из избранного</string>
+    <string name="explanation_text">Здесь будет объяснение при неправильном выборе</string>
 </resources>
