@@ -120,8 +120,8 @@ class QuestionViewModel(
 
     }
 
-    fun checkAnswer(questionId: Int, selectedAnswer: String, correctAnswer: String) {
-        val isCorrect = selectedAnswer == correctAnswer
+    fun checkAnswer(questionId: Int, selectedAnswer: String, correctAnswer: List<String>) {
+        val isCorrect = correctAnswer.contains(selectedAnswer)
 
         // Создание массива ответа на вопрос
         //orEmpty() — это метод, который, если значение value равно null,

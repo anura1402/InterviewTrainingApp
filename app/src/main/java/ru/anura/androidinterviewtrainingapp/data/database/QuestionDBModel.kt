@@ -17,7 +17,7 @@ data class QuestionDBModel(
     @ColumnInfo(name = "question_options")
     val options: List<String>,
     @ColumnInfo(name = "question_answer")
-    val answer: String,
+    val answer: List<String>,
     @ColumnInfo(name = "question_theme")
     val theme: Theme,
     @ColumnInfo(name = "isCorrectAnswer")
