@@ -114,7 +114,7 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
                 itemView.setBackgroundColor(Color.WHITE)
             }
             Log.d("OptionsAdapter", "selectedItemPositions: $selectedItemPositions, size: ${selectedItemPositions.size}, position: $position")
-            if (selectedItemPositions.size >= 2) {
+            if (selectedItemPositions.size >= 2 && isCorrect == false) {
                 for (i in 0 ..  selectedItemPositions.size - 2) {
                     if (position == i) {
                         itemView.setBackgroundColor(correctColor)
