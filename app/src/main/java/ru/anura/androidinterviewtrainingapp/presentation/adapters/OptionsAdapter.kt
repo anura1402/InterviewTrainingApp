@@ -22,7 +22,7 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
     private var isOptionSelectable = true
     private var isChangebaleColor = true
     private val selectedItemsMap = mutableMapOf<Int, Boolean?>()
-    private var selectedItemPositions= mutableListOf<Int>()
+    private var selectedItemPositions = mutableListOf<Int>()
     private var numberOfQuestion: Int = 0
 
     var items: List<String>
@@ -106,15 +106,30 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
                     onItemClick(position)
                 }
             }
-
-
             if (selectedItemPositions.contains(position) && isCorrect == true) {
                 itemView.setBackgroundColor(correctColor)
             } else if (selectedItemPositions.contains(position) && isCorrect == false) {
                 itemView.setBackgroundColor(wrongColor)
-            }else{
+            } else {
                 itemView.setBackgroundColor(Color.WHITE)
             }
+            Log.d("OptionsAdapter", "selectedItemPositions: $selectedItemPositions, size: ${selectedItemPositions.size}, position: $position")
+            if (selectedItemPositions.size >= 2) {
+                for (i in 0 ..  selectedItemPositions.size - 2) {
+                    if (position == i) {
+                        itemView.setBackgroundColor(correctColor)
+                    }
+                }
+            }
+
+
+//            if (selectedItemPositions.contains(position) && isCorrect == true) {
+//                itemView.setBackgroundColor(correctColor)
+//            } else if (selectedItemPositions.contains(position) && isCorrect == false) {
+//                itemView.setBackgroundColor(wrongColor)
+//            }else{
+//                itemView.setBackgroundColor(Color.WHITE)
+//            }
             Log.d("OptionsAdapter", "selectedItemPositions: $selectedItemPositions")
 
             if (isCorrect == null) {
