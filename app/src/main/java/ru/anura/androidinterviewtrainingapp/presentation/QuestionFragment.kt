@@ -1,6 +1,5 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -85,13 +84,14 @@ class QuestionFragment : Fragment() {
         viewModel.test.observe(viewLifecycleOwner) { it ->
             test = it
             if (test.countOfQuestions != 0) {
-                Log.d("check", "test: $it")
+                Log.d("QuestionFragment", "test: $it")
                 updateUI()
             } else {
                 launchNothingContainer()
             }
         }
         viewModel.answerResults.observe(viewLifecycleOwner) { it ->
+            //Log.d("OptionsAdapter", "Observed Answer Results: $it")
             optionsAdapter.answerResults = it
             answerResults = it
         }
@@ -240,12 +240,12 @@ class QuestionFragment : Fragment() {
     private fun setOptionsAdapterSettings(numberOfQuestion: Int, test: Test) {
         // Получаем сохраненную позицию для текущего вопроса из ViewModel.
         // Если для этого вопроса еще не был выбран ответ, устанавливаем позицию как NO_POSITION.
-        val savedPosition =
-            viewModel.getSelectedOptionForQuestion(numberOfQuestion) ?: RecyclerView.NO_POSITION
+        val savedPositions: Set<Int> =
+            viewModel.getSelectedOptionForQuestion(numberOfQuestion) ?: setOf(RecyclerView.NO_POSITION)
         optionsAdapter.apply {
             items = (test.questions[numberOfQuestion].options)
             // Устанавливаем сохраненную позицию в адаптере, чтобы выделить ранее выбранный ответ.
-            setSelectedPosition(savedPosition)
+            setSelectedPosition(savedPositions, numberOfQuestion)
             // Устанавливаем идентификатор текущего вопроса в адаптере, чтобы привязать действия к этому вопросу.
             currentQuestionId = numberOfQuestion
             // Определяем, можно ли выбирать опцию для текущего вопроса.
@@ -269,6 +269,9 @@ class QuestionFragment : Fragment() {
                     binding.scrollQuestionsFragment.getChildAt(0).height
                 )
             }
+//            Log.d("OptionAdapter", "savedPosition: $savedPosition , " +
+//                    "isOptionSelectedForQuestion: ${viewModel.isOptionSelectedForQuestion(numberOfQuestion)} " +
+//                    "numberOfQuestion: $numberOfQuestion")
         }
     }
 

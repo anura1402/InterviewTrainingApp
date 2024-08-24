@@ -20,6 +20,10 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
     private var onItemClick: (Int) -> Unit = {}
     private var selectedItemPosition: Int = RecyclerView.NO_POSITION
     private var isOptionSelectable = true
+    private var isChangebaleColor = true
+    private val selectedItemsMap = mutableMapOf<Int, Boolean?>()
+    private var selectedItemPositions= mutableListOf<Int>()
+    private var numberOfQuestion: Int = 0
 
     var items: List<String>
         get() = optionsList
@@ -30,11 +34,23 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
             optionsList = value
         }
 
-    fun setSelectedPosition(position: Int) {
-        val previousItemPosition = selectedItemPosition
-        selectedItemPosition = position
-        notifyItemChanged(previousItemPosition) // Сбрасываем выделение с предыдущего
-        notifyItemChanged(selectedItemPosition) // Применяем выделение к новому
+    fun setSelectedPosition(positions: Set<Int>, numberOfQuestion: Int) {
+        val previousNumberOfQuestion = this.numberOfQuestion
+        this.numberOfQuestion = numberOfQuestion
+        if (previousNumberOfQuestion != numberOfQuestion || positions.contains(-1) || selectedItemPositions.contains(
+                -1
+            )
+        ) {
+            selectedItemPositions.clear()
+            Log.d("OptionsAdapter", "IS CLEARED")
+        }
+        selectedItemPositions.addAll(positions)
+        //selectedItemPositions.addAll(positions)
+        notifyDataSetChanged()
+        Log.d(
+            "OptionsAdapter",
+            "selectedItemPositions: $selectedItemPositions, numberOfQuestion: $numberOfQuestion, previousNumberOfQuestion: $previousNumberOfQuestion positions: $positions"
+        )
     }
 
     fun setOnItemClickListener(listener: (Int) -> Unit) {
@@ -62,27 +78,48 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
     }
 
     inner class AnswerOptionViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val tvText = view.findViewById<TextView>(R.id.answerOption)
+        val tvText: TextView = view.findViewById(R.id.answerOption)
+        private val correctColor = ContextCompat.getColor(itemView.context, R.color.correct_answer)
+        private val wrongColor = ContextCompat.getColor(itemView.context, R.color.wrong_answer)
+        private var positions: Set<Int> = emptySet()
         fun bind(position: Int) {
-            val isCorrect = answerResults[currentQuestionId] == true
+            var isCorrect =
+                if (answerResults[currentQuestionId] == null) null else answerResults[currentQuestionId] == true
+            if (isCorrect != null && !isCorrect) {
+                isOptionSelectable = false
+            }
             itemView.setOnClickListener {
                 if (isOptionSelectable) {
-                    // Уведомляем об изменении выделенного элемента
-                    notifyItemChanged(selectedItemPosition)
+                    isCorrect = answerResults[currentQuestionId] == true
+                    Log.d(
+                        "OptionsAdapter",
+                        "2 answerResults: $answerResults, isCorrect: $isCorrect, selectedItemsMap $selectedItemsMap position $position"
+                    )
+                    positions += position
+                    setSelectedPosition(positions, numberOfQuestion)
+                    Log.d(
+                        "OptionsAdapter",
+                        "---position: $position selectedItemPositions $selectedItemPositions"
+                    )
                     selectedItemPosition = position
                     notifyItemChanged(selectedItemPosition)
                     onItemClick(position)
-                    isOptionSelectable = false
                 }
             }
-            val correctColor = ContextCompat.getColor(itemView.context, R.color.correct_answer)
-            val wrongColor = ContextCompat.getColor(itemView.context, R.color.wrong_answer)
-            itemView.setBackgroundColor(
-                if (position == selectedItemPosition && isCorrect) correctColor
-                else if (position == selectedItemPosition && !isCorrect) wrongColor
-                else Color.WHITE // цвет по умолчанию
-            )
 
+
+            if (selectedItemPositions.contains(position) && isCorrect == true) {
+                itemView.setBackgroundColor(correctColor)
+            } else if (selectedItemPositions.contains(position) && isCorrect == false) {
+                itemView.setBackgroundColor(wrongColor)
+            }else{
+                itemView.setBackgroundColor(Color.WHITE)
+            }
+            Log.d("OptionsAdapter", "selectedItemPositions: $selectedItemPositions")
+
+            if (isCorrect == null) {
+                itemView.setBackgroundColor(Color.WHITE)
+            }
         }
     }
 

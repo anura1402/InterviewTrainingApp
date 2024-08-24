@@ -56,7 +56,7 @@ class QuestionViewModel(
     val favList: LiveData<Map<Int, Boolean>>
         get() = _favList
 
-    private val _selectedOptionsMap = mutableMapOf<Int, Int>()
+    private val _selectedOptionsMap = mutableMapOf<Int, Set<Int>>()
     private val _isOptionSelectedMap = mutableMapOf<Int, Boolean>()
 
     private var _testResult = MutableLiveData<TestResult>()
@@ -76,13 +76,14 @@ class QuestionViewModel(
 
     private val questionIdsFromDB = mutableListOf<Int>()
 
-
     fun selectOptionForQuestion(questionId: Int, optionIndex: Int) {
-        _selectedOptionsMap[questionId] = optionIndex
+        val currentValues = _selectedOptionsMap[questionId] ?: setOf()
+        val updatedValues = currentValues + optionIndex
+        _selectedOptionsMap[questionId] = updatedValues
         _isOptionSelectedMap[questionId] = true
     }
 
-    fun getSelectedOptionForQuestion(questionId: Int): Int? {
+    fun getSelectedOptionForQuestion(questionId: Int): Set<Int>? {
         return _selectedOptionsMap[questionId]
     }
 
@@ -101,6 +102,7 @@ class QuestionViewModel(
     fun isFavTextViewClicked(index: Int) {
         _clickedFavTextView.value = index
     }
+
 
     fun changeFavList(questionId: Int, isFav: Boolean) {
         viewModelScope.launch {
@@ -122,6 +124,8 @@ class QuestionViewModel(
 
     fun checkAnswer(questionId: Int, selectedAnswer: String, correctAnswer: List<String>) {
         val isCorrect = correctAnswer.contains(selectedAnswer)
+        Log.d("OptionsAdapter", "correctAnswer: $correctAnswer")
+        //Log.d("OptionsAdapter", "Selected Answer: $selectedAnswer, Correct Answer: $correctAnswer, Is Correct: $isCorrect")
 
         // Создание массива ответа на вопрос
         //orEmpty() — это метод, который, если значение value равно null,
@@ -131,6 +135,7 @@ class QuestionViewModel(
         _answerResults.value = _answerResults.value.orEmpty().toMutableMap().apply {
             put(questionId, isCorrect)
         }
+        //Log.d("OptionsAdapter", "Updated Answer Results: ${_answerResults.value}")
         if (isCorrect) {
             countOfRightAnswers++
             changeIsCorrect(questionId, true)
@@ -157,7 +162,7 @@ class QuestionViewModel(
 
     fun startTest(mode: Mode) {
         viewModelScope.launch {
-            generateTest(2, mode)
+            generateTest(10, mode)
         }
     }
 
