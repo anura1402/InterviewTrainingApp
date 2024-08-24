@@ -260,8 +260,11 @@ class QuestionFragment : Fragment() {
                     test.questions[numberOfQuestion].answer
                 )
                 viewModel.explanation.observe(viewLifecycleOwner) {
-                    binding.explanationTv.isVisible = true
-                    binding.explanationTv.text = it
+                    if (answerResults[numberOfQuestion] == false) {
+                        binding.explanationTv.isVisible = true
+                        binding.explanationTv.text = it
+                    }
+
                 }
 
                 scrollToQuestionPosition(

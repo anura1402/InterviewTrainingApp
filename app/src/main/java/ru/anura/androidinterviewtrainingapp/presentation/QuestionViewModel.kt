@@ -142,6 +142,7 @@ class QuestionViewModel(
         } else {
             changeIsCorrect(questionId, false)
             _explanation.value = _test.value?.questions?.get(questionId)?.explanation
+            Log.d("ExplanationTest", "Explanation: ${_explanation.value}, questionId: $questionId, explanation from db: ${_test.value?.questions?.get(questionId)?.explanation}")
         }
     }
 
