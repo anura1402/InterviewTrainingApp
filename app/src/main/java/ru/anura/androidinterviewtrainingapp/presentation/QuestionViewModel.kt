@@ -180,7 +180,7 @@ class QuestionViewModel(
 
     fun startTest(mode: Mode) {
         viewModelScope.launch {
-            generateTest(10, mode)
+            generateTest(2, mode)
         }
     }
 

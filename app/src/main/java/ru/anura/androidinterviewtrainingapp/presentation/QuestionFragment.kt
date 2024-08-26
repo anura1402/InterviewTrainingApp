@@ -268,16 +268,11 @@ class QuestionFragment : Fragment() {
                     optionsAdapter.items[selectedPosition],
                     test.questions[numberOfQuestion].answer
                 )
-
-
                 scrollToQuestionPosition(
                     0,
                     binding.scrollQuestionsFragment.getChildAt(0).height
                 )
             }
-//            Log.d("OptionAdapter", "savedPosition: $savedPosition , " +
-//                    "isOptionSelectedForQuestion: ${viewModel.isOptionSelectedForQuestion(numberOfQuestion)} " +
-//                    "numberOfQuestion: $numberOfQuestion")
         }
     }
 
