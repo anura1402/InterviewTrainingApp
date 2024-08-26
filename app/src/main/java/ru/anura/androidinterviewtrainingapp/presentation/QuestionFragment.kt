@@ -84,16 +84,21 @@ class QuestionFragment : Fragment() {
         viewModel.test.observe(viewLifecycleOwner) { it ->
             test = it
             if (test.countOfQuestions != 0) {
-                Log.d("QuestionFragment", "test: $it")
                 updateUI()
             } else {
                 launchNothingContainer()
             }
         }
         viewModel.answerResults.observe(viewLifecycleOwner) { it ->
-            //Log.d("OptionsAdapter", "Observed Answer Results: $it")
             optionsAdapter.answerResults = it
             answerResults = it
+        }
+        viewModel.explanation.observe(viewLifecycleOwner) {
+            if (answerResults[answerResults.size-1] == false) {
+                binding.explanationTv.isVisible = true
+                binding.explanationTv.text = it
+            }
+
         }
         viewModel.testResult.observe(viewLifecycleOwner) { testResult ->
             launchResultFragment(testResult)
@@ -209,6 +214,9 @@ class QuestionFragment : Fragment() {
 
     private fun displayQuestion(test: Test, numberOfQuestion: Int) {
         binding.explanationTv.isVisible = false
+        if (answerResults[numberOfQuestion] == false) {
+            binding.explanationTv.isVisible = true
+        }
         scrollToQuestionPosition(0, 0)
         binding.questionText.text = test.questions[numberOfQuestion].text
         val imageName = "example"
@@ -241,7 +249,8 @@ class QuestionFragment : Fragment() {
         // Получаем сохраненную позицию для текущего вопроса из ViewModel.
         // Если для этого вопроса еще не был выбран ответ, устанавливаем позицию как NO_POSITION.
         val savedPositions: Set<Int> =
-            viewModel.getSelectedOptionForQuestion(numberOfQuestion) ?: setOf(RecyclerView.NO_POSITION)
+            viewModel.getSelectedOptionForQuestion(numberOfQuestion)
+                ?: setOf(RecyclerView.NO_POSITION)
         optionsAdapter.apply {
             items = (test.questions[numberOfQuestion].options)
             // Устанавливаем сохраненную позицию в адаптере, чтобы выделить ранее выбранный ответ.
@@ -259,13 +268,7 @@ class QuestionFragment : Fragment() {
                     optionsAdapter.items[selectedPosition],
                     test.questions[numberOfQuestion].answer
                 )
-                viewModel.explanation.observe(viewLifecycleOwner) {
-                    if (answerResults[numberOfQuestion] == false) {
-                        binding.explanationTv.isVisible = true
-                        binding.explanationTv.text = it
-                    }
 
-                }
 
                 scrollToQuestionPosition(
                     0,

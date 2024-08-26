@@ -75,6 +75,8 @@ class QuestionViewModel(
     val explanation: LiveData<String> get() = _explanation
 
     private val questionIdsFromDB = mutableListOf<Int>()
+    private val selectedAnswers = mutableListOf<String>()
+    private var isCorrectTotal: Boolean = true
 
     fun selectOptionForQuestion(questionId: Int, optionIndex: Int) {
         val currentValues = _selectedOptionsMap[questionId] ?: setOf()
@@ -96,7 +98,18 @@ class QuestionViewModel(
     }
 
     fun onButtonClicked(index: Int) {
+        checkIfAnswerWasFull(index)
         _clickedButtonOnQuestionId.value = index
+    }
+
+    private fun checkIfAnswerWasFull(index: Int) {
+        if (!isCorrectTotal) {
+            _answerResults.value = _answerResults.value.orEmpty().toMutableMap().apply {
+                put(index, isCorrectTotal)
+            }
+            changeIsCorrect(index, isCorrectTotal)
+            _explanation.value = _test.value?.questions?.get(index)?.explanation
+        }
     }
 
     fun isFavTextViewClicked(index: Int) {
@@ -124,9 +137,10 @@ class QuestionViewModel(
 
     fun checkAnswer(questionId: Int, selectedAnswer: String, correctAnswer: List<String>) {
         val isCorrect = correctAnswer.contains(selectedAnswer)
-        Log.d("OptionsAdapter", "correctAnswer: $correctAnswer")
-        //Log.d("OptionsAdapter", "Selected Answer: $selectedAnswer, Correct Answer: $correctAnswer, Is Correct: $isCorrect")
-
+        if (_answerResults.value?.containsKey(questionId) == false)
+            selectedAnswers.clear()
+        selectedAnswers.add(selectedAnswer)
+        isCorrectTotal = selectedAnswers == correctAnswer
         // Создание массива ответа на вопрос
         //orEmpty() — это метод, который, если значение value равно null,
         // вернет пустую неизменяемую карту. Это предотвращает возможные ошибки, связанные с null.
@@ -135,14 +149,13 @@ class QuestionViewModel(
         _answerResults.value = _answerResults.value.orEmpty().toMutableMap().apply {
             put(questionId, isCorrect)
         }
-        //Log.d("OptionsAdapter", "Updated Answer Results: ${_answerResults.value}")
-        if (isCorrect) {
+        if (isCorrectTotal) {
             countOfRightAnswers++
             changeIsCorrect(questionId, true)
-        } else {
+        }
+        if (!isCorrect) {
             changeIsCorrect(questionId, false)
             _explanation.value = _test.value?.questions?.get(questionId)?.explanation
-            Log.d("ExplanationTest", "Explanation: ${_explanation.value}, questionId: $questionId, explanation from db: ${_test.value?.questions?.get(questionId)?.explanation}")
         }
     }
 
@@ -154,6 +167,10 @@ class QuestionViewModel(
 
 
     fun finishTest() {
+        Log.d(
+            "QuestionViewModel",
+            "countOfRightAnswers: $countOfRightAnswers"
+        )
         _testResult.value = TestResult(
             countOfRightAnswers,
             test.value?.countOfQuestions ?: 0
