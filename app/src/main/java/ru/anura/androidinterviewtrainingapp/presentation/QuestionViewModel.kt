@@ -39,7 +39,7 @@ class QuestionViewModel(
 
     private var countOfRightAnswers = 0
     private var countOfQuestions = 0
-    private var allCountOfQuestions =0
+    private var allCountOfQuestions = 0
     private var _test = MutableLiveData<Test>()
     val test: LiveData<Test>
         get() = _test
@@ -47,12 +47,16 @@ class QuestionViewModel(
     private val _answerResults = MutableLiveData<Map<Int, Boolean>>()
     val answerResults: LiveData<Map<Int, Boolean>>
         get() = _answerResults
+//    private val _resultForPositions = MutableLiveData<List<Boolean>>()
+//    val resultForPositions: LiveData<List<Boolean>>
+//        get() = _resultForPositions
 
     private val _favList = MutableLiveData<Map<Int, Boolean>>()
     val favList: LiveData<Map<Int, Boolean>>
         get() = _favList
 
     private val _selectedOptionsMap = mutableMapOf<Int, Set<Int>>()
+    private val _resultForOptions = mutableMapOf<Int, List<Boolean>>()
     private val _isOptionSelectedMap = mutableMapOf<Int, Boolean>()
 
     private var _testResult = MutableLiveData<TestResult>()
@@ -85,6 +89,10 @@ class QuestionViewModel(
         return _selectedOptionsMap[questionId]
     }
 
+    fun getResultForOptions(questionId: Int): List<Boolean>? {
+        return _resultForOptions[questionId]
+    }
+
     fun isOptionSelectedForQuestion(questionId: Int): Boolean {
         return _isOptionSelectedMap[questionId] ?: false
     }
@@ -97,6 +105,7 @@ class QuestionViewModel(
         checkIfAnswerWasFull(index)
         _clickedButtonOnQuestionId.value = index
     }
+
 
     private fun checkIfAnswerWasFull(index: Int) {
         if (!isCorrectTotal) {
@@ -132,6 +141,7 @@ class QuestionViewModel(
     }
 
     fun checkAnswer(questionId: Int, selectedAnswer: String, correctAnswer: List<String>) {
+        Log.d("OptionsAdapter", "correctAnswer: $correctAnswer")
         val isCorrect = correctAnswer.contains(selectedAnswer)
         if (_answerResults.value?.containsKey(questionId) == false)
             selectedAnswers.clear()
@@ -145,6 +155,7 @@ class QuestionViewModel(
         _answerResults.value = _answerResults.value.orEmpty().toMutableMap().apply {
             put(questionId, isCorrect)
         }
+        addIsCorrectToResult(questionId, isCorrect)
         if (isCorrectTotal) {
             countOfRightAnswers++
             changeIsCorrect(questionId, true)
@@ -153,6 +164,13 @@ class QuestionViewModel(
             changeIsCorrect(questionId, false)
             _explanation.value = _test.value?.questions?.get(questionId)?.explanation
         }
+    }
+
+    private fun addIsCorrectToResult(questionId: Int, isCorrect: Boolean) {
+        val currentValues = _resultForOptions[questionId] ?: listOf()
+        val updatedValues = currentValues + isCorrect
+        _resultForOptions[questionId] = updatedValues
+        Log.d("OptionsAdapter", "_resultForPositions: ${_resultForOptions[questionId]}")
     }
 
     private fun changeIsCorrect(questionId: Int, isCorrect: Boolean) {
@@ -205,7 +223,8 @@ class QuestionViewModel(
             }
         }
     }
-    companion object{
+
+    companion object {
         private const val NUMBER_FOR_INTERVIEW = 20
     }
 }

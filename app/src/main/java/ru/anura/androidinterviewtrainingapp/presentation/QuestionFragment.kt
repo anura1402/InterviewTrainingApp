@@ -1,7 +1,6 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -93,8 +92,11 @@ class QuestionFragment : Fragment() {
             optionsAdapter.answerResults = it
             answerResults = it
         }
+//        viewModel.resultForPositions.observe(viewLifecycleOwner) { it ->
+//            optionsAdapter.setResultForOptions(it)
+//        }
         viewModel.explanation.observe(viewLifecycleOwner) {
-            if (answerResults[answerResults.size-1] == false) {
+            if (answerResults[answerResults.size - 1] == false) {
                 binding.explanationTv.isVisible = true
                 binding.explanationTv.text = it
             }
@@ -251,10 +253,13 @@ class QuestionFragment : Fragment() {
         val savedPositions: Set<Int> =
             viewModel.getSelectedOptionForQuestion(numberOfQuestion)
                 ?: setOf(RecyclerView.NO_POSITION)
+        val resultForOptions: List<Boolean> =
+            viewModel.getResultForOptions(numberOfQuestion) ?: listOf()
         optionsAdapter.apply {
             items = (test.questions[numberOfQuestion].options)
             // Устанавливаем сохраненную позицию в адаптере, чтобы выделить ранее выбранный ответ.
-            setSelectedPosition(savedPositions, numberOfQuestion)
+            setSelectedPositions(savedPositions, numberOfQuestion)
+            setResultForOptions(resultForOptions)
             // Устанавливаем идентификатор текущего вопроса в адаптере, чтобы привязать действия к этому вопросу.
             currentQuestionId = numberOfQuestion
             // Определяем, можно ли выбирать опцию для текущего вопроса.
@@ -268,6 +273,7 @@ class QuestionFragment : Fragment() {
                     optionsAdapter.items[selectedPosition],
                     test.questions[numberOfQuestion].answer
                 )
+                //setResultForOptions(viewModel.getResultForOptions())
                 scrollToQuestionPosition(
                     0,
                     binding.scrollQuestionsFragment.getChildAt(0).height
