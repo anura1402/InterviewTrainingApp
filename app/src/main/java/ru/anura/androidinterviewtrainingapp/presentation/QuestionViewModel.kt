@@ -39,11 +39,7 @@ class QuestionViewModel(
 
     private var countOfRightAnswers = 0
     private var countOfQuestions = 0
-    private val allCountOfQuestions by lazy {
-        viewModelScope.launch {
-            getCountOfQuestionsUseCase()
-        }
-    }
+    private var allCountOfQuestions =0
     private var _test = MutableLiveData<Test>()
     val test: LiveData<Test>
         get() = _test
@@ -180,17 +176,18 @@ class QuestionViewModel(
 
     fun startTest(mode: Mode) {
         viewModelScope.launch {
-            generateTest(2, mode)
+            generateTest(mode)
         }
     }
 
-    private suspend fun generateTest(countOfQuestions: Int, mode: Mode) {
-        this.countOfQuestions = countOfQuestions
+    private suspend fun generateTest(mode: Mode) {
+        allCountOfQuestions = getCountOfQuestionsUseCase()
         val job = viewModelScope.launch {
             _test.value = when (mode) {
-                Mode.INTERVIEW -> generateTestUseCase(countOfQuestions)
+                Mode.INTERVIEW -> generateTestUseCase(NUMBER_FOR_INTERVIEW)
                 Mode.MISTAKES -> getTestWithWrongQUseCase()
                 Mode.FAVORITES -> getTestWithFavQUseCase()
+                Mode.MARATHON -> generateTestUseCase(allCountOfQuestions)
             }
         }
         job.join()
@@ -207,5 +204,8 @@ class QuestionViewModel(
                     }
             }
         }
+    }
+    companion object{
+        private const val NUMBER_FOR_INTERVIEW = 20
     }
 }
