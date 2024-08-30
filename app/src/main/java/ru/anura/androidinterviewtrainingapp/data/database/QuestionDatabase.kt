@@ -9,7 +9,7 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [QuestionDBModel::class], version =3, exportSchema = false)
+@Database(entities = [QuestionDBModel::class], version =4, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class QuestionDatabase : RoomDatabase() {
     abstract fun questionDao(): QuestionDao
@@ -282,6 +282,15 @@ abstract class QuestionDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "UPDATE questionTable\n" +
+                            "SET isCorrectAnswer = 1;"
+                )
+            }
+        }
+
 
         fun getInstance(application: Application): QuestionDatabase {
             //Если не null, то сразу возвращаем значение
@@ -300,7 +309,7 @@ abstract class QuestionDatabase : RoomDatabase() {
                     DB_NAME
                 )
                     //.fallbackToDestructiveMigration()
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .createFromAsset("databases/new_question_database.db")
                     .build()
                 Log.d("QuestionDatabase", "База данных успешно загружена.")

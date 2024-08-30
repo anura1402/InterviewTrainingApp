@@ -50,14 +50,24 @@ class InterviewRepositoryImpl(application: Application) : InterviewRepository {
                 countOfQuestions
             )
         )
+        val questionsWithShuffledOptions = shuffleOptions(questions)
         if (questions.size < countOfQuestions) {
             throw IllegalArgumentException("Недостаточно вопросов в базе данных для создания теста.")
         }
 
         return Test(
             countOfQuestions = countOfQuestions,
-            questions = questions
+            questions = questionsWithShuffledOptions
         )
+    }
+    private fun shuffleOptions(questions: List<Question>): List<Question> {
+        val questionList: MutableList<Question> = mutableListOf()
+        for (question in questions) {
+            val mutableOptions = question.options.toMutableList()
+            mutableOptions.shuffle()
+            questionList.add(question.copy(options = mutableOptions))
+        }
+        return questionList
     }
 
     override suspend fun getTestWithWrongQ(): Test {

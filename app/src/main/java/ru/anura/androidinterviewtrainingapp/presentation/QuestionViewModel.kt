@@ -114,6 +114,7 @@ class QuestionViewModel(
             }
             changeIsCorrect(index, isCorrectTotal)
             _explanation.value = _test.value?.questions?.get(index)?.explanation
+            Log.d("QuestionViewModel", "isCorrectTotal: $isCorrectTotal")
         }
     }
 
@@ -141,12 +142,12 @@ class QuestionViewModel(
     }
 
     fun checkAnswer(questionId: Int, selectedAnswer: String, correctAnswer: List<String>) {
-        Log.d("OptionsAdapter", "correctAnswer: $correctAnswer")
+        Log.d("QuestionViewModel", "correctAnswer: $correctAnswer")
         val isCorrect = correctAnswer.contains(selectedAnswer)
         if (_answerResults.value?.containsKey(questionId) == false)
             selectedAnswers.clear()
         selectedAnswers.add(selectedAnswer)
-        isCorrectTotal = selectedAnswers == correctAnswer
+        isCorrectTotal = selectedAnswers.toSet() == correctAnswer.toSet()
         // Создание массива ответа на вопрос
         //orEmpty() — это метод, который, если значение value равно null,
         // вернет пустую неизменяемую карту. Это предотвращает возможные ошибки, связанные с null.
@@ -156,6 +157,8 @@ class QuestionViewModel(
             put(questionId, isCorrect)
         }
         addIsCorrectToResult(questionId, isCorrect)
+        Log.d("QuestionViewModel", "_answerResults: ${_answerResults.value}")
+        Log.d("QuestionViewModel", "isCorrectTotal: $isCorrectTotal")
         if (isCorrectTotal) {
             countOfRightAnswers++
             changeIsCorrect(questionId, true)

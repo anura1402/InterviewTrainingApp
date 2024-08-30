@@ -128,9 +128,9 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
                 }
                 Log.d("OptionsAdapter", "3 resultForOptions: $resultForOptions")
             }
-            if (selectedItemPositions.contains(position) && resultForOptions[position]) {
+            if (selectedItemPositions.contains(position) && resultForOptions[selectedItemPositions.indexOf(position)]) {
                 itemView.setBackgroundColor(correctColor)
-            } else if (selectedItemPositions.contains(position) && !resultForOptions[position]) {
+            } else if (selectedItemPositions.contains(position) && !resultForOptions[selectedItemPositions.indexOf(position)]) {
                 itemView.setBackgroundColor(wrongColor)
             } else {
                 itemView.setBackgroundColor(Color.WHITE)
