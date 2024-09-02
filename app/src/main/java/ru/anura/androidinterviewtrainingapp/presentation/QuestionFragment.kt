@@ -1,6 +1,7 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -158,15 +159,21 @@ class QuestionFragment : Fragment() {
 
     private fun highlightTextView(index: Int) {
         val nonNullView = requireNotNull(view)
-        val nextTextView =
+        val textView =
             nonNullView.findViewById<TextView>(
                 binding.container.getChildAt(
                     index
                 ).id
             )
-        scrollToTextView(nextTextView)
-        nextTextView.setBackgroundResource(R.drawable.border_for_tv)
-        updateTextViewBackground(index, nextTextView)
+        Log.d("QuestionFragment", "index: $index textView: ${textView.text}")
+        if (index != 0) {
+            scrollToTextView(
+                nonNullView.findViewById(binding.container.getChildAt(index-1).id)
+            )
+        }
+
+        updateTextViewBackground(index, textView)
+        textView.setBackgroundResource(R.drawable.border_for_tv)
     }
 
 
@@ -243,7 +250,7 @@ class QuestionFragment : Fragment() {
         binding.buttonNextQuestion.isVisible = true
         if (numberOfQuestion == test.countOfQuestions - 1) {
             binding.buttonNextQuestion.setText(R.string.finish_test)
-        } else{
+        } else {
             binding.buttonNextQuestion.setText(R.string.next_question_text)
         }
 
