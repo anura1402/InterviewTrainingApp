@@ -86,16 +86,18 @@ class ResultFragment : Fragment() {
             launchQuestionFragment(Theme.ALL, Mode.MISTAKES)
         }
         binding.scrollView.viewTreeObserver.addOnScrollChangedListener {
-            val view = binding.scrollView.getChildAt(binding.scrollView.childCount - 1)
-            val diff = (view.bottom - (binding.scrollView.height + binding.scrollView.scrollY))
+            _binding?.let { safeBinding ->
+                val view = safeBinding.scrollView.getChildAt(safeBinding.scrollView.childCount - 1)
+                val diff = (view.bottom - (safeBinding.scrollView.height + safeBinding.scrollView.scrollY))
 
-            if (diff == 0) {
-                // Пользователь достиг нижней части ScrollView
-                binding.buttonReturn.visibility = View.VISIBLE
-                binding.scrollView.scrollTo(0,binding.scrollView.getChildAt(0).height)
-            } else {
-                // Пользователь еще не достиг нижней части
-                binding.buttonReturn.visibility = View.INVISIBLE
+                if (diff == 0) {
+                    // Пользователь достиг нижней части ScrollView
+                    safeBinding.buttonReturn.visibility = View.VISIBLE
+                    safeBinding.scrollView.scrollTo(0, safeBinding.scrollView.getChildAt(0).height)
+                } else {
+                    // Пользователь еще не достиг нижней части
+                    safeBinding.buttonReturn.visibility = View.INVISIBLE
+                }
             }
         }
     }
