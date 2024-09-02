@@ -242,8 +242,11 @@ class QuestionFragment : Fragment() {
 
         binding.buttonNextQuestion.isVisible = true
         if (numberOfQuestion == test.countOfQuestions - 1) {
-            binding.buttonNextQuestion.text = "Завершить"
+            binding.buttonNextQuestion.setText(R.string.finish_test)
+        } else{
+            binding.buttonNextQuestion.setText(R.string.next_question_text)
         }
+
 
     }
 
