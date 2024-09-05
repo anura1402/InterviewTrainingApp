@@ -69,13 +69,19 @@ class LearningFragment : Fragment() {
         binding.rvThemes.adapter = theoryAdapter
     }
     private fun setupOnClickListener() {
-        theoryAdapter.onTheoryItemClickListener = {
-            //launchQuestionFragment(theme, Mode.THEMES)
+        theoryAdapter.onTheoryItemClickListener = { _, position ->
+            launchTheoryFragment(theoryList[position])
         }
     }
     private fun launchQuestionFragment(theme: Theme, mode: Mode){
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, QuestionFragment.newInstance(theme, mode))
+            .addToBackStack(null)
+            .commit()
+    }
+    private fun launchTheoryFragment(theory: Theory){
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, TheoryFragment.newInstance(theory))
             .addToBackStack(null)
             .commit()
     }

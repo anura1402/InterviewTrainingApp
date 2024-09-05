@@ -11,6 +11,7 @@
     <string name="question_number">1</string>
     <string name="question_string">Здесь будет текста вопроса</string>
     <string name="theme_string">Здесь будет выбранная тема</string>
+    <string name="theory_text">Здесь будет теория</string>
     <string name="button_start">Начать тестирование</string>
     <string name="button_return">Вернуться на главный экран</string>
     <string name="button_next_question">Следующий вопрос</string>

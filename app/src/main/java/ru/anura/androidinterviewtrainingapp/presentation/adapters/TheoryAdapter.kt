@@ -18,7 +18,7 @@ class TheoryAdapter: RecyclerView.Adapter<TheoryAdapter.TheoryViewHolder>() {
             diffResult.dispatchUpdatesTo(this)
             field = value
         }
-    var onTheoryItemClickListener: ((Theory) -> Unit)? = null
+    var onTheoryItemClickListener: ((Theory,Int) -> Unit)? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TheoryViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.choosing_theme_item, parent, false)
         return TheoryViewHolder(view)
@@ -29,7 +29,7 @@ class TheoryAdapter: RecyclerView.Adapter<TheoryAdapter.TheoryViewHolder>() {
         Log.d("LearningFragment","theory $theory")
         holder.tvThemeOption.text = theory.name
         holder.view.setOnClickListener {
-            onTheoryItemClickListener?.invoke(theory)
+            onTheoryItemClickListener?.invoke(theory,position)
         }
     }
 
