@@ -6,13 +6,14 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonJava"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"
         android:layout_margin="30dp"
         android:background="@drawable/main_buttons_design"
         android:text="@string/button_java"
+        app:layout_constraintWidth_percent="0.7"
         app:layout_constraintBottom_toTopOf="@+id/buttonKotlin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,7 +21,8 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonKotlin"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.7"
         android:layout_height="wrap_content"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"
@@ -35,7 +37,8 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonSQL"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.7"
         android:layout_height="wrap_content"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"
@@ -50,7 +53,8 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonAndroid"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.7"
         android:layout_height="wrap_content"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"
@@ -65,7 +69,8 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonThread"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.7"
         android:layout_height="wrap_content"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"
@@ -80,7 +85,8 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonBase"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.7"
         android:layout_height="wrap_content"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"

@@ -1,6 +1,6 @@
-package ru.anura.androidinterviewtrainingapp.data
+package ru.anura.androidinterviewtrainingapp.data.database.mappers
 
-import ru.anura.androidinterviewtrainingapp.data.database.QuestionDBModel
+import ru.anura.androidinterviewtrainingapp.data.database.questions.QuestionDBModel
 import ru.anura.androidinterviewtrainingapp.domain.entity.Question
 
 class QuestionMapper {

@@ -18,6 +18,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
 import ru.anura.androidinterviewtrainingapp.domain.entity.TestResult
+import ru.anura.androidinterviewtrainingapp.domain.usecases.GetCountOfQuestionsByCurrentThemeUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetCountOfQuestionsUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithFavQUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithWrongQUseCase
@@ -36,6 +37,7 @@ class QuestionViewModel(
     private val getTestWithWrongQUseCase = GetTestWithWrongQUseCase(repository)
     private val getTestWithFavQUseCase = GetTestWithFavQUseCase(repository)
     private val getCountOfQuestionsUseCase = GetCountOfQuestionsUseCase(repository)
+    private val getCountOfQuestionsByCurrentThemeUseCase = GetCountOfQuestionsByCurrentThemeUseCase(repository)
 
     private var countOfRightAnswers = 0
     private var countOfQuestions = 0
@@ -104,6 +106,9 @@ class QuestionViewModel(
     fun onButtonClicked(index: Int) {
         checkIfAnswerWasFull(index)
         _clickedButtonOnQuestionId.value = index
+    }
+    private suspend fun getCountOfQuestions(theme: Theme): Int {
+        return getCountOfQuestionsByCurrentThemeUseCase(theme)
     }
 
 
@@ -209,9 +214,11 @@ class QuestionViewModel(
                 Mode.MISTAKES -> getTestWithWrongQUseCase()
                 Mode.FAVORITES -> getTestWithFavQUseCase()
                 Mode.MARATHON -> generateTestUseCase(allCountOfQuestions)
+                Mode.THEMES -> generateTestCurrentThemeUseCase(theme, getCountOfQuestions(theme))
             }
         }
         job.join()
+        Log.d("QuestionViewModel", "theme $theme getCountOfQuestions(theme) ${getCountOfQuestions(theme)}")
         _test.value?.let { testValue ->
             for (i in 0 until testValue.countOfQuestions) {
                 questionIdsFromDB.add(testValue.questions[i].id)

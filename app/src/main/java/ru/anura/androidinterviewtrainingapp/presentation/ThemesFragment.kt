@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import ru.anura.androidinterviewtrainingapp.R
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentThemesBinding
+import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 
 class ThemesFragment : Fragment() {
     private var _binding: FragmentThemesBinding? = null
@@ -25,28 +26,28 @@ class ThemesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonJava.setOnClickListener {
-            launchLearningFragment()
+            launchLearningFragment(Theme.JAVA)
         }
         binding.buttonKotlin.setOnClickListener {
-            launchLearningFragment()
+            launchLearningFragment(Theme.KOTLIN)
         }
         binding.buttonSQL.setOnClickListener {
-            launchLearningFragment()
+            launchLearningFragment(Theme.SQL)
         }
         binding.buttonAndroid.setOnClickListener {
-            launchLearningFragment()
+            launchLearningFragment(Theme.ANDROID)
         }
         binding.buttonThread.setOnClickListener {
-            launchLearningFragment()
+            launchLearningFragment(Theme.THREADS)
         }
         binding.buttonBase.setOnClickListener {
-            launchLearningFragment()
+            launchLearningFragment(Theme.BASE)
         }
     }
 
-    private fun launchLearningFragment() {
+    private fun launchLearningFragment(theme: Theme) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, LearningFragment.newInstance())
+            .replace(R.id.main_container, LearningFragment.newInstance(theme))
             .addToBackStack(null)
             .commit()
     }

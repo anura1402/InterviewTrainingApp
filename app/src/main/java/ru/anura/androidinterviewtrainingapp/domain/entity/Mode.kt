@@ -5,5 +5,5 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 enum class Mode: Parcelable {
-    INTERVIEW, MISTAKES, FAVORITES, MARATHON
+    INTERVIEW, MISTAKES, FAVORITES, MARATHON, THEMES
 }

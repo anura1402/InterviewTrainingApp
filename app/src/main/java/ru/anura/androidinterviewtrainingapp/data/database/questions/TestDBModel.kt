@@ -1,4 +1,4 @@
-package ru.anura.androidinterviewtrainingapp.data.database
+package ru.anura.androidinterviewtrainingapp.data.database.questions
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

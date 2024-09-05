@@ -46,6 +46,15 @@ class QuestionFragment : Fragment() {
         super.onCreate(savedInstanceState)
         parseArgs()
     }
+    private fun parseArgs() {
+        requireArguments().getParcelable<Theme>(KEY_THEME)?.let {
+            theme = it
+        }
+        requireArguments().getParcelable<Mode>(KEY_MODE)?.let {
+            mode = it
+        }
+        Log.d("QuestionFragment", "theme: $theme mode: $mode")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,14 +65,7 @@ class QuestionFragment : Fragment() {
         return binding.root
     }
 
-    private fun parseArgs() {
-        requireArguments().getParcelable<Theme>(KEY_THEME)?.let {
-            theme = it
-        }
-        requireArguments().getParcelable<Mode>(KEY_MODE)?.let {
-            mode = it
-        }
-    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -93,9 +95,6 @@ class QuestionFragment : Fragment() {
             optionsAdapter.answerResults = it
             answerResults = it
         }
-//        viewModel.resultForPositions.observe(viewLifecycleOwner) { it ->
-//            optionsAdapter.setResultForOptions(it)
-//        }
         viewModel.explanation.observe(viewLifecycleOwner) {
             if (answerResults[answerResults.size - 1] == false) {
                 binding.explanationTv.isVisible = true
@@ -171,11 +170,9 @@ class QuestionFragment : Fragment() {
                 nonNullView.findViewById(binding.container.getChildAt(index-1).id)
             )
         }
-
         updateTextViewBackground(index, textView)
         textView.setBackgroundResource(R.drawable.border_for_tv)
     }
-
 
     private fun createTextViews(numberOfTextViews: Int) {
         val container: LinearLayout = binding.container
@@ -291,7 +288,6 @@ class QuestionFragment : Fragment() {
             }
         }
     }
-
 
     private fun scrollToQuestionPosition(x: Int, y: Int) {
         binding.scrollQuestionsFragment.post {

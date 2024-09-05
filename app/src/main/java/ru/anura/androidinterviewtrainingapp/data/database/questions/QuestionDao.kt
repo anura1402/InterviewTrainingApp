@@ -1,4 +1,4 @@
-package ru.anura.androidinterviewtrainingapp.data.database
+package ru.anura.androidinterviewtrainingapp.data.database.questions
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -14,15 +14,15 @@ interface QuestionDao {
     // adds a new entry to our database.
     // if some data is same/conflict, it'll be replace with new data
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertQuestion(question :QuestionDBModel)
+    suspend fun insertQuestion(question : QuestionDBModel)
 
     // deletes a question
     @Delete
-    suspend fun deleteQuestion(question :QuestionDBModel)
+    suspend fun deleteQuestion(question : QuestionDBModel)
 
     // updates a question.
     @Update
-    suspend fun updateQuestion(question :QuestionDBModel)
+    suspend fun updateQuestion(question : QuestionDBModel)
 
     // read all the questions from questionTable
     // and arrange questions in ascending order
@@ -59,4 +59,6 @@ interface QuestionDao {
 
     @Query("SELECT COUNT(*) FROM questionTable")
     suspend fun getCountOfQuestions(): Int
+    @Query("SELECT COUNT(*) FROM questionTable WHERE question_theme = :theme")
+    suspend fun getCountOfQuestionsByCurrentTheme(theme: String): Int
 }

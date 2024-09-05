@@ -1,8 +1,10 @@
 package ru.anura.androidinterviewtrainingapp.data
 
 import android.app.Application
-import ru.anura.androidinterviewtrainingapp.data.database.QuestionDao
+import android.util.Log
+import ru.anura.androidinterviewtrainingapp.data.database.questions.QuestionDao
 import ru.anura.androidinterviewtrainingapp.data.database.QuestionDatabase
+import ru.anura.androidinterviewtrainingapp.data.database.mappers.QuestionMapper
 import ru.anura.androidinterviewtrainingapp.domain.entity.Question
 import ru.anura.androidinterviewtrainingapp.domain.entity.Test
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
@@ -51,6 +53,7 @@ class InterviewRepositoryImpl(application: Application) : InterviewRepository {
             )
         )
         val questionsWithShuffledOptions = shuffleOptions(questions)
+        Log.d("AndroidRuntime","questions $questions count ${questions.size} countOfQuestions $countOfQuestions")
         if (questions.size < countOfQuestions) {
             throw IllegalArgumentException("Недостаточно вопросов в базе данных для создания теста.")
         }
@@ -88,6 +91,10 @@ class InterviewRepositoryImpl(application: Application) : InterviewRepository {
 
     override suspend fun getCountOfQuestions(): Int {
         return questionDao.getCountOfQuestions()
+    }
+
+    override suspend fun getCountOfQuestionsByCurrentTheme(theme: Theme): Int {
+        return questionDao.getCountOfQuestionsByCurrentTheme(theme.toString())
     }
 
 
