@@ -9,4 +9,5 @@
     <color name="wrong_answer">#F6C4C0</color>
     <color name="correct_answer">#CDF4CF</color>
     <color name="code_background">#F2ECFD</color>
+    <color name="progress_bar_filling">#AD84FA</color>
 </resources>

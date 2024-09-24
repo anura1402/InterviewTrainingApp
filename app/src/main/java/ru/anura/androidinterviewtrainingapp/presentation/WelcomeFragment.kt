@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import ru.anura.androidinterviewtrainingapp.R
@@ -38,6 +39,9 @@ class WelcomeFragment : Fragment() {
                     correctAnsweredCount.toString(),
                     countOfQuestions.toString()
                 )
+                val progress = (correctAnsweredCount.toFloat() / countOfQuestions * 100).toInt()
+                binding.progressBar1.progress = progress
+
             }
         }
         with(binding) {
