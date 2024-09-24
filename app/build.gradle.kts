@@ -59,6 +59,7 @@ dependencies {
     implementation ("androidx.room:room-runtime:2.6.1")
     kapt ("androidx.room:room-compiler:2.6.1")
 
+
     // Kotlin Extensions and Coroutines support for Room
     implementation ("androidx.room:room-ktx:2.6.1")
 
@@ -68,4 +69,9 @@ dependencies {
     annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
 
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+}
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas".toString())
+    }
 }

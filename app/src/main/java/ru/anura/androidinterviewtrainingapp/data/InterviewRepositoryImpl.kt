@@ -14,6 +14,7 @@ class InterviewRepositoryImpl(application: Application) : InterviewRepository {
     private val questionDao: QuestionDao = QuestionDatabase.getInstance(application).questionDao()
     private val mapper: QuestionMapper = QuestionMapper()
 
+
     override suspend fun changeIsFav(id: Int, isFav: Boolean) {
         questionDao.changeIsFav(id, isFav)
     }
@@ -53,7 +54,7 @@ class InterviewRepositoryImpl(application: Application) : InterviewRepository {
             )
         )
         val questionsWithShuffledOptions = shuffleOptions(questions)
-        Log.d("AndroidRuntime","questions $questions count ${questions.size} countOfQuestions $countOfQuestions")
+        Log.d("AndroidRuntime","count ${questions.size} countOfQuestions $countOfQuestions")
         if (questions.size < countOfQuestions) {
             throw IllegalArgumentException("Недостаточно вопросов в базе данных для создания теста.")
         }

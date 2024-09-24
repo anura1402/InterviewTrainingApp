@@ -1,10 +1,21 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.BackgroundColorSpan
+import android.text.style.LineBackgroundSpan
+import android.text.style.TypefaceSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,19 +48,69 @@ class TheoryFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.theoryName.text = theory.name
-        binding.theoryText.text = theory.text
+        val result = splitText(theory.text)
+        Log.d("TheoryFragment", "result: $result, theory.text: ${theory.text}")
+        binding.theoryText.setText( result, TextView.BufferType.SPANNABLE)
+        //Log.d("TheoryFragment", "theory.text: ${theory.text}")
         binding.buttonBack.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
     }
+    private fun splitText(input: String): SpannableStringBuilder {
+        val spannableText = SpannableStringBuilder()
+        val str = mutableListOf<String>()
+        var remainingText = input
+        if (!remainingText.contains("<pre><code>")) {
+            spannableText.append(remainingText)
+        }
+        while (remainingText.contains("<pre><code>")) {
+            // Извлекаем текст между тегами
+            val beforeTag = remainingText.substringBefore("<pre><code>") + "\n"
+            val betweenTags = remainingText.substringAfter("<pre><code>").substringBefore("</code></pre>") +"\n"
+            spannableText.append(beforeTag)
+            spannableText.append(highlightCode(betweenTags))
+            // Добавляем извлеченный текст в результат
+            str.add(beforeTag)
+            str.add(betweenTags)
+
+            // Обновляем оставшийся текст
+            remainingText = remainingText.substringAfter("</code></pre>")
+        }
+        return spannableText
+    }
+
+    private fun highlightCode(
+        code: String
+    ): SpannableStringBuilder {
+        val spannableText = SpannableStringBuilder()
+
+        // Добавляем код на Java с фоном и monospace шрифтом
+        val startCode = spannableText.length
+        spannableText.append(code)
+        spannableText.setSpan(
+            CodeBackgroundSpan(
+                ContextCompat.getColor(requireContext(), R.color.code_background), 20
+            ),  // Прямоугольный фон с padding
+            startCode, spannableText.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        spannableText.setSpan(
+            TypefaceSpan("monospace"),
+            startCode,
+            spannableText.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        return spannableText
+    }
 
     private fun parseArgs() {
         requireArguments().getParcelable<Theory>(KEY_THEORY)?.let {
-             theory = it
+            theory = it
         }
     }
 
@@ -68,6 +129,33 @@ class TheoryFragment : Fragment() {
                     putParcelable(KEY_THEORY, theory)
                 }
             }
+        }
+    }
+    inner class CodeBackgroundSpan(private val backgroundColor: Int, private val padding: Int) :
+        LineBackgroundSpan {
+        override fun drawBackground(
+            canvas: Canvas, paint: Paint, left: Int, right: Int,
+            top: Int, baseline: Int, bottom: Int,
+            text: CharSequence, start: Int, end: Int,
+            lineNumber: Int
+        ) {
+            // Сохраняем старые параметры кисти
+            val oldColor = paint.color
+
+            // Устанавливаем цвет фона
+            paint.color = backgroundColor
+
+            // Рисуем прямоугольник вокруг строки
+            canvas.drawRect(
+                left.toFloat() - padding,    // Левее начала текста на padding
+                top.toFloat() - padding / 2, // Выше строки на половину отступа
+                right.toFloat() + padding,   // Правее конца текста на padding
+                bottom.toFloat() + padding / 2, // Ниже строки на половину отступа
+                paint
+            )
+
+            // Восстанавливаем старый цвет кисти
+            paint.color = oldColor
         }
     }
 }
