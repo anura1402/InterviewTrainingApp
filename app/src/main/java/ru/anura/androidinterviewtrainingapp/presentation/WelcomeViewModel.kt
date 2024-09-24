@@ -12,6 +12,7 @@ import ru.anura.androidinterviewtrainingapp.domain.usecases.ChangeIsCorrectUseCa
 import ru.anura.androidinterviewtrainingapp.domain.usecases.ChangeIsFavUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GenerateTestCurrentThemeUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GenerateTestUseCase
+import ru.anura.androidinterviewtrainingapp.domain.usecases.GetCorrectAnsweredCountUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetCountOfQuestionsByCurrentThemeUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetCountOfQuestionsUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithFavQUseCase
@@ -20,19 +21,23 @@ import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithWrongQUse
 class WelcomeViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = InterviewRepositoryImpl(application)
     private val getCountOfQuestionsUseCase = GetCountOfQuestionsUseCase(repository)
+    private val getCorrectAnsweredCountUseCase = GetCorrectAnsweredCountUseCase(repository)
     private val _countOfQuestions = MutableLiveData<Int>()
+    private val _correctAnsweredCount = MutableLiveData<Int>()
     val countOfQuestions: LiveData<Int> get() = _countOfQuestions
+    val correctAnsweredCount: LiveData<Int> get() = _correctAnsweredCount
 
 
-
-     fun getCountOfQuestions() {
+    fun getCountOfQuestions() {
         viewModelScope.launch {
-            try {
-                val count = getCountOfQuestionsUseCase()
-                _countOfQuestions.value = count
-            } catch (e: Exception) {
-                Log.e("WelcomeViewModel", "Error getting count of questions: ${e.message}")
-            }
+            val count = getCountOfQuestionsUseCase()
+            _countOfQuestions.value = count
+        }
+    }
+    fun getCorrectAnsweredCount() {
+        viewModelScope.launch {
+            val count = getCorrectAnsweredCountUseCase()
+            _correctAnsweredCount.value = count
         }
     }
 

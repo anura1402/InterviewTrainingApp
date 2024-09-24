@@ -21,4 +21,6 @@ interface InterviewRepository {
 
     suspend fun getCountOfQuestions(): Int
     suspend fun getCountOfQuestionsByCurrentTheme(theme:Theme): Int
+    suspend fun getCorrectAnsweredCount(): Int
+
 }

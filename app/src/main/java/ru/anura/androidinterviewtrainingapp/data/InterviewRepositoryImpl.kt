@@ -98,5 +98,9 @@ class InterviewRepositoryImpl(application: Application) : InterviewRepository {
         return questionDao.getCountOfQuestionsByCurrentTheme(theme.toString())
     }
 
+    override suspend fun getCorrectAnsweredCount(): Int {
+        return questionDao.getCorrectAnsweredCount()
+    }
+
 
 }

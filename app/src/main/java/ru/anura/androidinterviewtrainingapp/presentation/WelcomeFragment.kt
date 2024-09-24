@@ -30,11 +30,17 @@ class WelcomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[WelcomeViewModel::class.java]
         viewModel.getCountOfQuestions()
-        viewModel.countOfQuestions.observe(viewLifecycleOwner){
-            binding.countOfQuestions.text = requireActivity().getString(
-                R.string.countOfQuestions,"0", it.toString())
+        viewModel.getCorrectAnsweredCount()
+        viewModel.countOfQuestions.observe(viewLifecycleOwner) { countOfQuestions ->
+            viewModel.correctAnsweredCount.observe(viewLifecycleOwner) { correctAnsweredCount ->
+                binding.countOfQuestions.text = requireActivity().getString(
+                    R.string.countOfQuestions,
+                    correctAnsweredCount.toString(),
+                    countOfQuestions.toString()
+                )
+            }
         }
-        with(binding){
+        with(binding) {
             interviewButton.setOnClickListener {
                 launchQuestionFragment(Theme.ALL, Mode.INTERVIEW)
             }
