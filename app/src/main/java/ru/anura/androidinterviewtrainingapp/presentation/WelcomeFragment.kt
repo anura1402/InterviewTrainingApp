@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import ru.anura.androidinterviewtrainingapp.R
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentWelcomeBinding
 import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 
 class WelcomeFragment : Fragment() {
+    private lateinit var viewModel: WelcomeViewModel
     private var _binding: FragmentWelcomeBinding? = null
     private val binding: FragmentWelcomeBinding
         get() = _binding ?: throw RuntimeException("FragmentWelcomeBinding == null")
@@ -26,6 +28,12 @@ class WelcomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this)[WelcomeViewModel::class.java]
+        viewModel.getCountOfQuestions()
+        viewModel.countOfQuestions.observe(viewLifecycleOwner){
+            binding.countOfQuestions.text = requireActivity().getString(
+                R.string.countOfQuestions,"0", it.toString())
+        }
         with(binding){
             interviewButton.setOnClickListener {
                 launchQuestionFragment(Theme.ALL, Mode.INTERVIEW)
