@@ -92,6 +92,7 @@ class QuestionViewModel(
     }
 
     fun getResultForOptions(questionId: Int): List<Boolean>? {
+        Log.d("OptionsAdapter", "_resultForPositions from getter: ${_resultForOptions[questionId]}")
         return _resultForOptions[questionId]
     }
 

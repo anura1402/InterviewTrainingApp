@@ -101,20 +101,20 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
             itemView.setOnClickListener {
                 if (isOptionSelectable) {
                     isCorrect = answerResults[currentQuestionId] == true
-                    Log.d(
-                        "OptionsAdapter",
-                        "2 answerResults: $answerResults, isCorrect: $isCorrect, selectedItemsMap $selectedItemsMap position $position"
-                    )
+//                    Log.d(
+//                        "OptionsAdapter",
+//                        "2 answerResults: $answerResults, isCorrect: $isCorrect, selectedItemsMap $selectedItemsMap position $position"
+//                    )
                     positions += position
                     setSelectedPositions(positions, numberOfQuestion)
 
                     //setResultForOptions(listOf(isCorrect!!))
 
                     //selectedItemsMap[position] = isCorrect
-                    Log.d(
-                        "OptionsAdapter",
-                        "---position: $position selectedItemPositions $selectedItemPositions isCorrect: $isCorrect resultForOptions $resultForOptions"
-                    )
+//                    Log.d(
+//                        "OptionsAdapter",
+//                        "---position: $position selectedItemPositions $selectedItemPositions isCorrect: $isCorrect resultForOptions $resultForOptions"
+//                    )
                     selectedItemPosition = position
                     notifyItemChanged(selectedItemPosition)
                     onItemClick(position)
@@ -128,6 +128,8 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
                 }
                 Log.d("OptionsAdapter", "3 resultForOptions: $resultForOptions")
             }
+            val index = selectedItemPositions.indexOf(position)
+            Log.d("OptionsAdapter", "position: $position, index: $index, selectedItemPositions: $selectedItemPositions, resultForOptions: $resultForOptions")
             if (selectedItemPositions.contains(position) && resultForOptions[selectedItemPositions.indexOf(position)]) {
                 itemView.setBackgroundColor(correctColor)
             } else if (selectedItemPositions.contains(position) && !resultForOptions[selectedItemPositions.indexOf(position)]) {
@@ -135,10 +137,10 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
             } else {
                 itemView.setBackgroundColor(Color.WHITE)
             }
-            Log.d(
-                "OptionsAdapter",
-                "selectedItemPositions: $selectedItemPositions, position: $position isCorrect: $isCorrect resultForOptions: $resultForOptions"
-            )
+//            Log.d(
+//                "OptionsAdapter",
+//                "selectedItemPositions: $selectedItemPositions, position: $position isCorrect: $isCorrect resultForOptions: $resultForOptions"
+//            )
 //            if (selectedItemPositions.size >= 2 && isCorrect == false) {
 //                for (i in 0..selectedItemPositions.size - 2) {
 //                    if (position == i) {

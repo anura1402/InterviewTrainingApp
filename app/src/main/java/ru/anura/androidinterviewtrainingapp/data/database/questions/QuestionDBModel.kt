@@ -21,7 +21,7 @@ data class QuestionDBModel(
     @ColumnInfo(name = "question_theme")
     val theme: Theme,
     @ColumnInfo(name = "isCorrectAnswer")
-    val isCorrectAnswer: Boolean,
+    val isCorrectAnswer: Boolean?,
     @ColumnInfo(name = "isFavorite")
     val isFavorite: Boolean,
     @ColumnInfo(name = "question_explanation")

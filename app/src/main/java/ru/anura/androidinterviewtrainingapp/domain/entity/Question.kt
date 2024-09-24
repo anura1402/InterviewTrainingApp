@@ -9,7 +9,7 @@ data class Question(
     val image: String,
     val options: List<String>,
     val answer: List<String>,
-    val isCorrectAnswer: Boolean,
+    val isCorrectAnswer: Boolean?,
     val isFavorite: Boolean,
     val explanation: String
 )

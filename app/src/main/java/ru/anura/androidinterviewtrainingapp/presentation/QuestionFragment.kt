@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -225,14 +226,21 @@ class QuestionFragment : Fragment() {
         }
         scrollToQuestionPosition(0, 0)
         binding.questionText.text = test.questions[numberOfQuestion].text
-        val imageName = "example"
-        //val imageName = test.questions[numberOfQuestion-1].image
-        val resourceId = resources.getIdentifier(
-            imageName,
-            "drawable",
-            requireActivity().packageName
-        )
-        binding.questionImage.setImageResource(resourceId)
+        //val imageName = "example"
+        val imageName = test.questions[numberOfQuestion].image
+        if (imageName == ""){
+            binding.questionImage.isGone = true
+        } else{
+            binding.questionImage.isGone = false
+            val resourceId = resources.getIdentifier(
+                imageName,
+                "drawable",
+                requireActivity().packageName
+            )
+            binding.questionImage.setImageResource(resourceId)
+        }
+
+
 
         setOptionsAdapterSettings(numberOfQuestion, test)
 
@@ -262,6 +270,7 @@ class QuestionFragment : Fragment() {
                 ?: setOf(RecyclerView.NO_POSITION)
         val resultForOptions: List<Boolean> =
             viewModel.getResultForOptions(numberOfQuestion) ?: listOf()
+        //Log.d("OptionsAdapter", "resultForPositions from fragment: ${resultForOptions[numberOfQuestion]}")
         optionsAdapter.apply {
             items = (test.questions[numberOfQuestion].options)
             // Устанавливаем сохраненную позицию в адаптере, чтобы выделить ранее выбранный ответ.

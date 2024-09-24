@@ -27,8 +27,12 @@ class WelcomeViewModel(application: Application) : AndroidViewModel(application)
 
      fun getCountOfQuestions() {
         viewModelScope.launch {
-            val count = getCountOfQuestionsUseCase()
-            _countOfQuestions.value = count
+            try {
+                val count = getCountOfQuestionsUseCase()
+                _countOfQuestions.value = count
+            } catch (e: Exception) {
+                Log.e("WelcomeViewModel", "Error getting count of questions: ${e.message}")
+            }
         }
     }
 

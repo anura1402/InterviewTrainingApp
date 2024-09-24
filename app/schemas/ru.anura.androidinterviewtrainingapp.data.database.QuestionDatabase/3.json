@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "4dc79e9c812d2455b96526e430db5df7",
+    "identityHash": "0b6f35be4ffd113b8b81fb437a1f628e",
     "entities": [
       {
         "tableName": "questionTable",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`question_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `question_text` TEXT NOT NULL, `question_image` TEXT NOT NULL, `question_options` TEXT NOT NULL, `question_answer` TEXT NOT NULL, `question_theme` TEXT NOT NULL, `isCorrectAnswer` INTEGER NOT NULL, `isFavorite` INTEGER NOT NULL, `question_explanation` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`question_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `question_text` TEXT NOT NULL, `question_image` TEXT NOT NULL, `question_options` TEXT NOT NULL, `question_answer` TEXT NOT NULL, `question_theme` TEXT NOT NULL, `isCorrectAnswer` INTEGER, `isFavorite` INTEGER NOT NULL, `question_explanation` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -48,7 +48,7 @@
             "fieldPath": "isCorrectAnswer",
             "columnName": "isCorrectAnswer",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "isFavorite",
@@ -114,7 +114,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4dc79e9c812d2455b96526e430db5df7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0b6f35be4ffd113b8b81fb437a1f628e')"
     ]
   }
 }

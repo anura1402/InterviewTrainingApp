@@ -37,7 +37,7 @@ abstract class QuestionDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL(
                     "UPDATE questionTable\n" +
-                            "SET isCorrectAnswer = 1;"
+                            "SET isCorrectAnswer = NULL;"
                 )
             }
         }
