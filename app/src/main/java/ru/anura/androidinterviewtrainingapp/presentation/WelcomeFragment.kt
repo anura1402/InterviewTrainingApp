@@ -17,6 +17,7 @@ class WelcomeFragment : Fragment() {
     private var _binding: FragmentWelcomeBinding? = null
     private val binding: FragmentWelcomeBinding
         get() = _binding ?: throw RuntimeException("FragmentWelcomeBinding == null")
+    private var count:Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,6 +34,7 @@ class WelcomeFragment : Fragment() {
         viewModel.getCountOfQuestions()
         viewModel.getCorrectAnsweredCount()
         viewModel.countOfQuestions.observe(viewLifecycleOwner) { countOfQuestions ->
+            count = countOfQuestions
             viewModel.correctAnsweredCount.observe(viewLifecycleOwner) { correctAnsweredCount ->
                 binding.countOfQuestions.text = requireActivity().getString(
                     R.string.countOfQuestions,
@@ -88,7 +90,7 @@ class WelcomeFragment : Fragment() {
 
     private fun launchMarathonFragment() {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, MarathonFragment.newInstance())
+            .replace(R.id.main_container, MarathonFragment.newInstance(count))
             .addToBackStack(null)
             .commit()
     }
