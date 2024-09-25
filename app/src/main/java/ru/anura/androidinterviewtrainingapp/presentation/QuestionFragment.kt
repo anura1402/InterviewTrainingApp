@@ -102,7 +102,6 @@ class QuestionFragment : Fragment() {
                 binding.explanationTv.isVisible = true
                 binding.explanationTv.text = it
             } else if (answerResults[answerResults.size - 1] == true){
-                binding.explanationCB.isGone = false
                 binding.explanationTv.text = it
             }
         }
