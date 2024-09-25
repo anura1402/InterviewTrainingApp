@@ -97,11 +97,14 @@ class QuestionFragment : Fragment() {
             answerResults = it
         }
         viewModel.explanation.observe(viewLifecycleOwner) {
+            Log.d("Explanation", "answerResults: ${answerResults[answerResults.size - 1]} explanation: $it")
             if (answerResults[answerResults.size - 1] == false) {
                 binding.explanationTv.isVisible = true
                 binding.explanationTv.text = it
+            } else if (answerResults[answerResults.size - 1] == true){
+                binding.explanationCB.isGone = false
+                binding.explanationTv.text = it
             }
-
         }
         viewModel.testResult.observe(viewLifecycleOwner) { testResult ->
             launchResultFragment(testResult)
@@ -221,8 +224,18 @@ class QuestionFragment : Fragment() {
 
     private fun displayQuestion(test: Test, numberOfQuestion: Int) {
         binding.explanationTv.isVisible = false
+        binding.explanationCB.isGone = true
         if (answerResults[numberOfQuestion] == false) {
             binding.explanationTv.isVisible = true
+        } else if (answerResults[numberOfQuestion] == true){
+            binding.explanationCB.isGone = false
+            binding.explanationCB.setOnCheckedChangeListener{ _, isChecked ->
+                if (isChecked) {
+                    binding.explanationTv.isVisible = true
+                } else{
+                    binding.explanationTv.isVisible = false
+                }
+            }
         }
         scrollToQuestionPosition(0, 0)
         binding.questionText.text = test.questions[numberOfQuestion].text

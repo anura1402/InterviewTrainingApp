@@ -106,7 +106,9 @@ class QuestionViewModel(
 
     fun onButtonClicked(index: Int) {
         checkIfAnswerWasFull(index)
+        _explanation.value = _test.value?.questions?.get(index)?.explanation
         _clickedButtonOnQuestionId.value = index
+
     }
     private suspend fun getCountOfQuestions(theme: Theme): Int {
         return getCountOfQuestionsByCurrentThemeUseCase(theme)

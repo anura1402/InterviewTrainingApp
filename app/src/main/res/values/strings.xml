@@ -33,4 +33,5 @@
     <string name="explanation_text">Здесь будет объяснение при неправильном выборе</string>
     <string name="finish_test">Завершить</string>
     <string name="next_question_text">Следующий вопрос</string>
+    <string name="show_explanation">Показать объяснение</string>
 </resources>
