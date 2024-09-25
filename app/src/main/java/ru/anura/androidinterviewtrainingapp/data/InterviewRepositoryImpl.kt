@@ -102,5 +102,7 @@ class InterviewRepositoryImpl(application: Application) : InterviewRepository {
         return questionDao.getCorrectAnsweredCount()
     }
 
-
+    override suspend fun isThemePassed(theme: Theme): Boolean {
+        return questionDao.getCountOfCorrectAnswersByTheme(theme.toString()) == getCountOfQuestionsByCurrentTheme(theme)
+    }
 }

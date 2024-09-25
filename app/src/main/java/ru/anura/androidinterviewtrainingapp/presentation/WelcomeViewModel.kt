@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.anura.androidinterviewtrainingapp.data.InterviewRepositoryImpl
+import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.domain.usecases.ChangeIsCorrectUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.ChangeIsFavUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GenerateTestCurrentThemeUseCase
@@ -17,15 +18,19 @@ import ru.anura.androidinterviewtrainingapp.domain.usecases.GetCountOfQuestionsB
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetCountOfQuestionsUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithFavQUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithWrongQUseCase
+import ru.anura.androidinterviewtrainingapp.domain.usecases.IsThemePassedUseCase
 
 class WelcomeViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = InterviewRepositoryImpl(application)
     private val getCountOfQuestionsUseCase = GetCountOfQuestionsUseCase(repository)
     private val getCorrectAnsweredCountUseCase = GetCorrectAnsweredCountUseCase(repository)
+    private val isThemePassedUseCase = IsThemePassedUseCase(repository)
     private val _countOfQuestions = MutableLiveData<Int>()
     private val _correctAnsweredCount = MutableLiveData<Int>()
+    private val _countOfPassedThemes = MutableLiveData<Int>()
     val countOfQuestions: LiveData<Int> get() = _countOfQuestions
     val correctAnsweredCount: LiveData<Int> get() = _correctAnsweredCount
+    val countOfPassedThemes: LiveData<Int> get() = _countOfPassedThemes
 
 
     fun getCountOfQuestions() {
@@ -38,6 +43,19 @@ class WelcomeViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             val count = getCorrectAnsweredCountUseCase()
             _correctAnsweredCount.value = count
+        }
+    }
+
+    fun getCountOfPassedThemes() {
+        viewModelScope.launch {
+            var count = 0
+            if (isThemePassedUseCase(Theme.JAVA)) count++
+            if (isThemePassedUseCase(Theme.ANDROID)) count++
+            if (isThemePassedUseCase(Theme.KOTLIN)) count++
+            if (isThemePassedUseCase(Theme.BASE)) count++
+            if (isThemePassedUseCase(Theme.THREADS)) count++
+            if (isThemePassedUseCase(Theme.SQL)) count++
+            _countOfPassedThemes.value = count
         }
     }
 

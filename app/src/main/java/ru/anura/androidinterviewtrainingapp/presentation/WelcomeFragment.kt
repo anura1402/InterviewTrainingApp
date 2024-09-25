@@ -44,6 +44,14 @@ class WelcomeFragment : Fragment() {
 
             }
         }
+        viewModel.getCountOfPassedThemes()
+        viewModel.countOfPassedThemes.observe(viewLifecycleOwner) {
+            binding.countOfThemes.text = requireActivity().getString(
+                R.string.countOfThemes, it.toString()
+            )
+            val progress = (it.toFloat() / 6 * 100).toInt()
+            binding.progressBar1.progress = progress
+        }
         with(binding) {
             interviewButton.setOnClickListener {
                 launchQuestionFragment(Theme.ALL, Mode.INTERVIEW)

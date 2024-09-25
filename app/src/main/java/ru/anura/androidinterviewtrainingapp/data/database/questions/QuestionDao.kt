@@ -64,4 +64,6 @@ interface QuestionDao {
 
     @Query("SELECT COUNT(*) FROM questionTable WHERE isCorrectAnswer = 1")
     suspend fun getCorrectAnsweredCount(): Int
+    @Query("SELECT COUNT(*) FROM questionTable WHERE question_theme = :theme AND isCorrectAnswer = 1")
+    suspend fun getCountOfCorrectAnswersByTheme(theme: String): Int
 }

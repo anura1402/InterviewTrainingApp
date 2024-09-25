@@ -2,7 +2,7 @@
     <string name="app_name">AndroidInterviewTrainingApp</string>
     <string name="countOfQuestions">%s/%s</string>
     <string name="questions">Вопросы</string>
-    <string name="countOfThemes">%s/5</string>
+    <string name="countOfThemes">%s/6</string>
     <string name="themes">Темы</string>
     <string name="interview">Собеседование</string>
     <string name="marathon">Марафон</string>
