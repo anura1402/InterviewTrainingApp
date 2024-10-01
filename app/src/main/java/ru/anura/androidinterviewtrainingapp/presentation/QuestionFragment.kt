@@ -40,7 +40,7 @@ class QuestionFragment : Fragment() {
     }
     private var previousId = 0
     private lateinit var pastTextView: TextView
-    private var answerResults: Map<Int, Boolean> = emptyMap()
+    private var answerResults: LinkedHashMap<Int, Boolean> = LinkedHashMap()
     private var test: Test = Test(0, emptyList())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,11 +96,18 @@ class QuestionFragment : Fragment() {
             optionsAdapter.answerResults = it
             answerResults = it
         }
+
         viewModel.explanation.observe(viewLifecycleOwner) {
+            var lastKey: Int? = null
+            for ((key) in answerResults) {
+                lastKey = key
+            }
+            Log.d("Explanation","answerResults: $answerResults, answerResults[lastKey]: ${answerResults[lastKey]} lastKey: ${lastKey}")
             binding.explanationTv.text = it
-            if (answerResults[answerResults.size - 1] == false) {
+            if (answerResults[lastKey] == false) {
+                Log.d("Explanation","HERE")
                 binding.explanationTv.isVisible = true
-            } else if (answerResults[answerResults.size - 1] == true) {
+            } else if (answerResults[lastKey] == true) {
                 binding.explanationTv.isVisible = binding.explanationCB.isChecked
             }
         }
@@ -253,6 +260,7 @@ class QuestionFragment : Fragment() {
     }
 
     private fun setExplanationSettings(numberOfQuestion: Int) {
+        Log.d("Explanation", "numberOfQuestion: $numberOfQuestion")
         viewModel.setExplanation(numberOfQuestion)
         binding.explanationCB.setOnCheckedChangeListener(null)
         binding.explanationCB.isChecked = false

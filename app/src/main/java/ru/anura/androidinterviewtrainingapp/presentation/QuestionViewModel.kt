@@ -45,8 +45,8 @@ class QuestionViewModel(
     val test: LiveData<Test>
         get() = _test
 
-    private val _answerResults = MutableLiveData<Map<Int, Boolean>>()
-    val answerResults: LiveData<Map<Int, Boolean>>
+    private val _answerResults = MutableLiveData<LinkedHashMap<Int, Boolean>>()
+    val answerResults: LiveData<LinkedHashMap<Int, Boolean>>
         get() = _answerResults
 //    private val _resultForPositions = MutableLiveData<List<Boolean>>()
 //    val resultForPositions: LiveData<List<Boolean>>
@@ -117,7 +117,10 @@ class QuestionViewModel(
 
     private fun checkIfAnswerWasFull(index: Int) {
         if (!isCorrectTotal) {
-            _answerResults.value = _answerResults.value.orEmpty().toMutableMap().apply {
+//            _answerResults.value = _answerResults.value.orEmpty().toMutableMap().apply {
+//                put(index, isCorrectTotal)
+//            }
+            _answerResults.value = (_answerResults.value ?: LinkedHashMap()).apply {
                 put(index, isCorrectTotal)
             }
             changeIsCorrect(index, isCorrectTotal)
@@ -164,7 +167,7 @@ class QuestionViewModel(
         // вернет пустую неизменяемую карту. Это предотвращает возможные ошибки, связанные с null.
         //toMutableMap() Преобразует неизменяемую карту (которую мы получили от orEmpty())
         // в изменяемую (MutableMap), чтобы мы могли добавлять или изменять элементы.
-        _answerResults.value = _answerResults.value.orEmpty().toMutableMap().apply {
+        _answerResults.value = (_answerResults.value ?: LinkedHashMap()).apply {
             put(questionId, isCorrect)
         }
         addIsCorrectToResult(questionId, isCorrect)
