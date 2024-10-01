@@ -43,7 +43,6 @@ class WelcomeFragment : Fragment() {
                 )
                 val progress = (correctAnsweredCount.toFloat() / countOfQuestions * 100).toInt()
                 binding.progressBar1.progress = progress
-
             }
         }
         viewModel.getCountOfPassedThemes()
@@ -52,7 +51,7 @@ class WelcomeFragment : Fragment() {
                 R.string.countOfThemes, it.toString()
             )
             val progress = (it.toFloat() / 6 * 100).toInt()
-            binding.progressBar1.progress = progress
+            binding.progressBar.progress = progress
         }
         with(binding) {
             interviewButton.setOnClickListener {

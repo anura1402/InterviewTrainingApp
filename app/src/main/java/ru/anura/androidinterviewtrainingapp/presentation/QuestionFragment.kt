@@ -47,6 +47,7 @@ class QuestionFragment : Fragment() {
         super.onCreate(savedInstanceState)
         parseArgs()
     }
+
     private fun parseArgs() {
         requireArguments().getParcelable<Theme>(KEY_THEME)?.let {
             theme = it
@@ -65,7 +66,6 @@ class QuestionFragment : Fragment() {
         _binding = FragmentQuestionsBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,12 +97,11 @@ class QuestionFragment : Fragment() {
             answerResults = it
         }
         viewModel.explanation.observe(viewLifecycleOwner) {
-            Log.d("Explanation", "answerResults: ${answerResults[answerResults.size - 1]} explanation: $it")
+            binding.explanationTv.text = it
             if (answerResults[answerResults.size - 1] == false) {
                 binding.explanationTv.isVisible = true
-                binding.explanationTv.text = it
-            } else if (answerResults[answerResults.size - 1] == true){
-                binding.explanationTv.text = it
+            } else if (answerResults[answerResults.size - 1] == true) {
+                binding.explanationTv.isVisible = binding.explanationCB.isChecked
             }
         }
         viewModel.testResult.observe(viewLifecycleOwner) { testResult ->
@@ -167,10 +166,9 @@ class QuestionFragment : Fragment() {
                     index
                 ).id
             )
-        Log.d("QuestionFragment", "index: $index textView: ${textView.text}")
         if (index != 0) {
             scrollToTextView(
-                nonNullView.findViewById(binding.container.getChildAt(index-1).id)
+                nonNullView.findViewById(binding.container.getChildAt(index - 1).id)
             )
         }
         updateTextViewBackground(index, textView)
@@ -223,26 +221,13 @@ class QuestionFragment : Fragment() {
 
     private fun displayQuestion(test: Test, numberOfQuestion: Int) {
         binding.explanationTv.isVisible = false
-        binding.explanationCB.isGone = true
-        if (answerResults[numberOfQuestion] == false) {
-            binding.explanationTv.isVisible = true
-        } else if (answerResults[numberOfQuestion] == true){
-            binding.explanationCB.isGone = false
-            binding.explanationCB.setOnCheckedChangeListener{ _, isChecked ->
-                if (isChecked) {
-                    binding.explanationTv.isVisible = true
-                } else{
-                    binding.explanationTv.isVisible = false
-                }
-            }
-        }
+        setExplanationSettings(numberOfQuestion)
         scrollToQuestionPosition(0, 0)
         binding.questionText.text = test.questions[numberOfQuestion].text
-        //val imageName = "example"
         val imageName = test.questions[numberOfQuestion].image
-        if (imageName == ""){
+        if (imageName == "") {
             binding.questionImage.isGone = true
-        } else{
+        } else {
             binding.questionImage.isGone = false
             val resourceId = resources.getIdentifier(
                 imageName,
@@ -251,11 +236,7 @@ class QuestionFragment : Fragment() {
             )
             binding.questionImage.setImageResource(resourceId)
         }
-
-
-
         setOptionsAdapterSettings(numberOfQuestion, test)
-
         viewModel.favList.observe(viewLifecycleOwner) {
             if (viewModel.favList.value?.get(numberOfQuestion) == true) {
                 updateFavTextView(true)
@@ -263,15 +244,28 @@ class QuestionFragment : Fragment() {
                 updateFavTextView(false)
             }
         }
-
         binding.buttonNextQuestion.isVisible = true
         if (numberOfQuestion == test.countOfQuestions - 1) {
             binding.buttonNextQuestion.setText(R.string.finish_test)
         } else {
             binding.buttonNextQuestion.setText(R.string.next_question_text)
         }
+    }
 
-
+    private fun setExplanationSettings(numberOfQuestion: Int) {
+        viewModel.setExplanation(numberOfQuestion)
+        binding.explanationCB.setOnCheckedChangeListener(null)
+        binding.explanationCB.isChecked = false
+        binding.explanationTv.isVisible = false
+        binding.explanationCB.isGone = true
+        if (answerResults[numberOfQuestion] == false) {
+            binding.explanationTv.isVisible = true
+        } else if (answerResults[numberOfQuestion] == true) {
+            binding.explanationCB.isGone = false
+            binding.explanationCB.setOnCheckedChangeListener { _, isChecked ->
+                binding.explanationTv.isVisible = isChecked
+            }
+        }
     }
 
     private fun setOptionsAdapterSettings(numberOfQuestion: Int, test: Test) {

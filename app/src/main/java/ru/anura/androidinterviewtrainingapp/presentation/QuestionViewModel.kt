@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import ru.anura.androidinterviewtrainingapp.data.InterviewRepositoryImpl
 import ru.anura.androidinterviewtrainingapp.domain.entity.Test
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
@@ -13,7 +12,6 @@ import ru.anura.androidinterviewtrainingapp.domain.usecases.ChangeIsCorrectUseCa
 import ru.anura.androidinterviewtrainingapp.domain.usecases.ChangeIsFavUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GenerateTestCurrentThemeUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GenerateTestUseCase
-import ru.anura.androidinterviewtrainingapp.domain.usecases.GetQuestionByIdUseCase
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
@@ -37,7 +35,8 @@ class QuestionViewModel(
     private val getTestWithWrongQUseCase = GetTestWithWrongQUseCase(repository)
     private val getTestWithFavQUseCase = GetTestWithFavQUseCase(repository)
     private val getCountOfQuestionsUseCase = GetCountOfQuestionsUseCase(repository)
-    private val getCountOfQuestionsByCurrentThemeUseCase = GetCountOfQuestionsByCurrentThemeUseCase(repository)
+    private val getCountOfQuestionsByCurrentThemeUseCase =
+        GetCountOfQuestionsByCurrentThemeUseCase(repository)
 
     private var countOfRightAnswers = 0
     private var countOfQuestions = 0
@@ -92,7 +91,7 @@ class QuestionViewModel(
     }
 
     fun getResultForOptions(questionId: Int): List<Boolean>? {
-        Log.d("OptionsAdapter", "_resultForPositions from getter: ${_resultForOptions[questionId]}")
+        //Log.d("OptionsAdapter", "_resultForPositions from getter: ${_resultForOptions[questionId]}")
         return _resultForOptions[questionId]
     }
 
@@ -106,10 +105,11 @@ class QuestionViewModel(
 
     fun onButtonClicked(index: Int) {
         checkIfAnswerWasFull(index)
-        _explanation.value = _test.value?.questions?.get(index)?.explanation
+        //setExplanation(index)
         _clickedButtonOnQuestionId.value = index
 
     }
+
     private suspend fun getCountOfQuestions(theme: Theme): Int {
         return getCountOfQuestionsByCurrentThemeUseCase(theme)
     }
@@ -121,9 +121,12 @@ class QuestionViewModel(
                 put(index, isCorrectTotal)
             }
             changeIsCorrect(index, isCorrectTotal)
-            _explanation.value = _test.value?.questions?.get(index)?.explanation
-            Log.d("QuestionViewModel", "isCorrectTotal: $isCorrectTotal")
+            setExplanation(index)
         }
+    }
+
+    fun setExplanation(index: Int) {
+        _explanation.value = _test.value?.questions?.get(index)?.explanation
     }
 
     fun isFavTextViewClicked(index: Int) {
@@ -165,15 +168,13 @@ class QuestionViewModel(
             put(questionId, isCorrect)
         }
         addIsCorrectToResult(questionId, isCorrect)
-        Log.d("QuestionViewModel", "_answerResults: ${_answerResults.value}")
-        Log.d("QuestionViewModel", "isCorrectTotal: $isCorrectTotal")
         if (isCorrectTotal) {
             countOfRightAnswers++
             changeIsCorrect(questionId, true)
         }
         if (!isCorrect) {
             changeIsCorrect(questionId, false)
-            _explanation.value = _test.value?.questions?.get(questionId)?.explanation
+            setExplanation(questionId)
         }
     }
 
@@ -221,7 +222,10 @@ class QuestionViewModel(
             }
         }
         job.join()
-        Log.d("QuestionViewModel", "theme $theme getCountOfQuestions(theme) ${getCountOfQuestions(theme)}")
+        Log.d(
+            "QuestionViewModel",
+            "theme $theme getCountOfQuestions(theme) ${getCountOfQuestions(theme)}"
+        )
         _test.value?.let { testValue ->
             for (i in 0 until testValue.countOfQuestions) {
                 questionIdsFromDB.add(testValue.questions[i].id)

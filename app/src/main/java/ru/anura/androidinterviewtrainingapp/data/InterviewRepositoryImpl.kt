@@ -76,17 +76,19 @@ class InterviewRepositoryImpl(application: Application) : InterviewRepository {
 
     override suspend fun getTestWithWrongQ(): Test {
         val questions = mapper.mapListDbModelToListEntity(questionDao.getWrongQuestions())
+        val questionsWithShuffledOptions = shuffleOptions(questions)
         return Test(
             countOfQuestions = questions.size,
-            questions = questions
+            questions = questionsWithShuffledOptions
         )
     }
 
     override suspend fun getTestWithFavQ(): Test {
         val questions = mapper.mapListDbModelToListEntity(questionDao.getFavQuestions())
+        val questionsWithShuffledOptions = shuffleOptions(questions)
         return Test(
             countOfQuestions = questions.size,
-            questions = questions
+            questions = questionsWithShuffledOptions
         )
     }
 
