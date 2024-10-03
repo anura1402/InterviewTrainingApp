@@ -13,7 +13,12 @@ import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 
 class WelcomeFragment : Fragment() {
-    private lateinit var viewModel: WelcomeViewModel
+    private val viewModelByFactory by lazy {
+        WelcomeViewModelFactory(requireActivity().application)
+    }
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelByFactory)[WelcomeViewModel::class.java]
+    }
     private var _binding: FragmentWelcomeBinding? = null
     private val binding: FragmentWelcomeBinding
         get() = _binding ?: throw RuntimeException("FragmentWelcomeBinding == null")
@@ -30,7 +35,7 @@ class WelcomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[WelcomeViewModel::class.java]
+        //viewModel = ViewModelProvider(this)[WelcomeViewModel::class.java]
         viewModel.getCountOfQuestions()
         viewModel.getCorrectAnsweredCount()
         viewModel.countOfQuestions.observe(viewLifecycleOwner) { countOfQuestions ->
