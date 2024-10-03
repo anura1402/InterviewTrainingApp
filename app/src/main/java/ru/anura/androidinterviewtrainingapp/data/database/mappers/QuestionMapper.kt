@@ -2,8 +2,9 @@ package ru.anura.androidinterviewtrainingapp.data.database.mappers
 
 import ru.anura.androidinterviewtrainingapp.data.database.questions.QuestionDBModel
 import ru.anura.androidinterviewtrainingapp.domain.entity.Question
+import javax.inject.Inject
 
-class QuestionMapper {
+class QuestionMapper @Inject constructor() {
     fun mapEntityToDbModel(question: Question) = QuestionDBModel(
         id = question.id,
         text = question.text,

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.anura.androidinterviewtrainingapp.data.InterviewRepositoryImpl
@@ -19,12 +20,13 @@ import ru.anura.androidinterviewtrainingapp.domain.usecases.GetCountOfQuestionsU
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithFavQUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithWrongQUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.IsThemePassedUseCase
+import javax.inject.Inject
 
-class WelcomeViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository = InterviewRepositoryImpl(application)
-    private val getCountOfQuestionsUseCase = GetCountOfQuestionsUseCase(repository)
-    private val getCorrectAnsweredCountUseCase = GetCorrectAnsweredCountUseCase(repository)
-    private val isThemePassedUseCase = IsThemePassedUseCase(repository)
+class WelcomeViewModel @Inject constructor(
+    private val getCountOfQuestionsUseCase: GetCountOfQuestionsUseCase,
+    private val getCorrectAnsweredCountUseCase:GetCorrectAnsweredCountUseCase,
+    private val isThemePassedUseCase:IsThemePassedUseCase
+) : ViewModel(){
     private val _countOfQuestions = MutableLiveData<Int>()
     private val _correctAnsweredCount = MutableLiveData<Int>()
     private val _countOfPassedThemes = MutableLiveData<Int>()

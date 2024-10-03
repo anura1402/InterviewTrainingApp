@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import ru.anura.androidinterviewtrainingapp.data.InterviewRepositoryImpl
 import ru.anura.androidinterviewtrainingapp.domain.entity.Test
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
@@ -13,6 +14,9 @@ import ru.anura.androidinterviewtrainingapp.domain.usecases.ChangeIsFavUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GenerateTestCurrentThemeUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GenerateTestUseCase
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
 import ru.anura.androidinterviewtrainingapp.domain.entity.TestResult
@@ -20,23 +24,34 @@ import ru.anura.androidinterviewtrainingapp.domain.usecases.GetCountOfQuestionsB
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetCountOfQuestionsUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithFavQUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithWrongQUseCase
+import javax.inject.Inject
 
-class QuestionViewModel(
-    private val application: Application,
+class QuestionViewModel @Inject constructor(
+    private val changeIsCorrectUseCase: ChangeIsCorrectUseCase,
+    private val changeIsFavUseCase: ChangeIsFavUseCase,
+
+    private val generateTestCurrentThemeUseCase: GenerateTestCurrentThemeUseCase,
+    private val generateTestUseCase: GenerateTestUseCase,
+    private val getTestWithWrongQUseCase: GetTestWithWrongQUseCase,
+    private val getTestWithFavQUseCase: GetTestWithFavQUseCase,
+    private val getCountOfQuestionsUseCase: GetCountOfQuestionsUseCase ,
+    private val getCountOfQuestionsByCurrentThemeUseCase: GetCountOfQuestionsByCurrentThemeUseCase,
+
     private val theme: Theme
-) : AndroidViewModel(application) {
-    private val repository = InterviewRepositoryImpl(application)
+) : ViewModel(){
+    //AndroidViewModel(application) {
+    //private val repository = InterviewRepositoryImpl(application)
 
-    private val changeIsCorrectUseCase = ChangeIsCorrectUseCase(repository)
-    private val changeIsFavUseCase = ChangeIsFavUseCase(repository)
-
-    private val generateTestCurrentThemeUseCase = GenerateTestCurrentThemeUseCase(repository)
-    private val generateTestUseCase = GenerateTestUseCase(repository)
-    private val getTestWithWrongQUseCase = GetTestWithWrongQUseCase(repository)
-    private val getTestWithFavQUseCase = GetTestWithFavQUseCase(repository)
-    private val getCountOfQuestionsUseCase = GetCountOfQuestionsUseCase(repository)
-    private val getCountOfQuestionsByCurrentThemeUseCase =
-        GetCountOfQuestionsByCurrentThemeUseCase(repository)
+//    private val changeIsCorrectUseCase = ChangeIsCorrectUseCase(repository)
+//    private val changeIsFavUseCase = ChangeIsFavUseCase(repository)
+//
+//    private val generateTestCurrentThemeUseCase = GenerateTestCurrentThemeUseCase(repository)
+//    private val generateTestUseCase = GenerateTestUseCase(repository)
+//    private val getTestWithWrongQUseCase = GetTestWithWrongQUseCase(repository)
+//    private val getTestWithFavQUseCase = GetTestWithFavQUseCase(repository)
+//    private val getCountOfQuestionsUseCase = GetCountOfQuestionsUseCase(repository)
+//    private val getCountOfQuestionsByCurrentThemeUseCase =
+//        GetCountOfQuestionsByCurrentThemeUseCase(repository)
 
     private var countOfRightAnswers = 0
     private var countOfQuestions = 0
@@ -246,5 +261,6 @@ class QuestionViewModel(
 
     companion object {
         private const val NUMBER_FOR_INTERVIEW = 20
+
     }
 }

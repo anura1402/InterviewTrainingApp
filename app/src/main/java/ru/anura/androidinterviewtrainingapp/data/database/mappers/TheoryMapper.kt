@@ -4,8 +4,9 @@ import ru.anura.androidinterviewtrainingapp.data.database.questions.QuestionDBMo
 import ru.anura.androidinterviewtrainingapp.data.database.themes.TheoryDBModel
 import ru.anura.androidinterviewtrainingapp.domain.entity.Question
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theory
+import javax.inject.Inject
 
-class TheoryMapper {
+class TheoryMapper @Inject constructor(){
     fun mapEntityToDbModel(theory: Theory) = TheoryDBModel(
         id = theory.id,
         text = theory.text,

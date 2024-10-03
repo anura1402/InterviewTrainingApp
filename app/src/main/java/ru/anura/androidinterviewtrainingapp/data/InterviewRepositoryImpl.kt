@@ -9,10 +9,12 @@ import ru.anura.androidinterviewtrainingapp.domain.entity.Question
 import ru.anura.androidinterviewtrainingapp.domain.entity.Test
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.domain.repository.InterviewRepository
+import javax.inject.Inject
 
-class InterviewRepositoryImpl(application: Application) : InterviewRepository {
-    private val questionDao: QuestionDao = QuestionDatabase.getInstance(application).questionDao()
-    private val mapper: QuestionMapper = QuestionMapper()
+class InterviewRepositoryImpl @Inject constructor(
+    private val questionDao: QuestionDao, // = QuestionDatabase.getInstance(application).questionDao()
+    private val mapper: QuestionMapper // = QuestionMapper()
+) : InterviewRepository {
 
 
     override suspend fun changeIsFav(id: Int, isFav: Boolean) {
@@ -54,7 +56,7 @@ class InterviewRepositoryImpl(application: Application) : InterviewRepository {
             )
         )
         val questionsWithShuffledOptions = shuffleOptions(questions)
-        Log.d("AndroidRuntime","count ${questions.size} countOfQuestions $countOfQuestions")
+        Log.d("AndroidRuntime", "count ${questions.size} countOfQuestions $countOfQuestions")
         if (questions.size < countOfQuestions) {
             throw IllegalArgumentException("Недостаточно вопросов в базе данных для создания теста.")
         }
@@ -64,6 +66,7 @@ class InterviewRepositoryImpl(application: Application) : InterviewRepository {
             questions = questionsWithShuffledOptions
         )
     }
+
     private fun shuffleOptions(questions: List<Question>): List<Question> {
         val questionList: MutableList<Question> = mutableListOf()
         for (question in questions) {
@@ -105,6 +108,8 @@ class InterviewRepositoryImpl(application: Application) : InterviewRepository {
     }
 
     override suspend fun isThemePassed(theme: Theme): Boolean {
-        return questionDao.getCountOfCorrectAnswersByTheme(theme.toString()) == getCountOfQuestionsByCurrentTheme(theme)
+        return questionDao.getCountOfCorrectAnswersByTheme(theme.toString()) == getCountOfQuestionsByCurrentTheme(
+            theme
+        )
     }
 }

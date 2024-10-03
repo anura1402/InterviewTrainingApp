@@ -1,5 +1,6 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,15 +17,28 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.anura.androidinterviewtrainingapp.R
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentQuestionsBinding
+import ru.anura.androidinterviewtrainingapp.di.DaggerApplicationComponent
+import ru.anura.androidinterviewtrainingapp.di.ThemeModule
 import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
 import ru.anura.androidinterviewtrainingapp.domain.entity.Test
 import ru.anura.androidinterviewtrainingapp.domain.entity.TestResult
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.presentation.adapters.OptionsAdapter
+import javax.inject.Inject
 
 class QuestionFragment : Fragment() {
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: QuestionViewModel
+
+    private val component by lazy {
+        DaggerApplicationComponent.factory()
+            .create(requireActivity().application, themeModule)
+    }
+
     private lateinit var theme: Theme
+    private var themeModule = ThemeModule(theme)
     private lateinit var mode: Mode
     private lateinit var optionsAdapter: OptionsAdapter
 
@@ -32,20 +46,27 @@ class QuestionFragment : Fragment() {
     private val binding: FragmentQuestionsBinding
         get() = _binding ?: throw RuntimeException("FragmentQuestionsBinding == null")
 
-    private val viewModelByFactory by lazy {
-        QuestionViewModelFactory(theme, requireActivity().application)
-    }
-    private val viewModel by lazy {
-        ViewModelProvider(this, viewModelByFactory)[QuestionViewModel::class.java]
-    }
+//    private val viewModelByFactory by lazy {
+//        QuestionViewModelFactory(theme, requireActivity().application)
+//    }
+//    private val viewModel by lazy {
+//        ViewModelProvider(this, viewModelByFactory)[QuestionViewModel::class.java]
+//    }
     private var previousId = 0
     private lateinit var pastTextView: TextView
     private var answerResults: LinkedHashMap<Int, Boolean> = LinkedHashMap()
     private var test: Test = Test(0, emptyList())
 
+    override fun onAttach(context: Context) {
+
+        super.onAttach(context)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseArgs()
+        themeModule = ThemeModule(theme)
+        component.inject(this)
     }
 
     private fun parseArgs() {
@@ -71,6 +92,7 @@ class QuestionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
+        viewModel = ViewModelProvider(this, viewModelFactory)[QuestionViewModel::class.java]
         viewModel.startTest(mode)
         observeViewModel()
 

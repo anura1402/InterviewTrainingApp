@@ -10,31 +10,42 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.anura.androidinterviewtrainingapp.R
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentCertainThemeBinding
-import ru.anura.androidinterviewtrainingapp.databinding.FragmentMarathonBinding
+import ru.anura.androidinterviewtrainingapp.di.DaggerApplicationComponent
+import ru.anura.androidinterviewtrainingapp.di.ThemeModule
 import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
-import ru.anura.androidinterviewtrainingapp.domain.entity.Test
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theory
-import ru.anura.androidinterviewtrainingapp.presentation.adapters.OptionsAdapter
 import ru.anura.androidinterviewtrainingapp.presentation.adapters.TheoryAdapter
+import javax.inject.Inject
 
 class LearningFragment : Fragment() {
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: TheoryViewModel
     private var _binding: FragmentCertainThemeBinding? = null
+    private val component by lazy {
+        DaggerApplicationComponent.factory()
+            .create(requireActivity().application, themeModule)
+    }
+
     private lateinit var theme: Theme
+    private var themeModule = ThemeModule(theme)
     private lateinit var theoryAdapter: TheoryAdapter
     private var theoryList: List<Theory> = listOf()
     private val binding: FragmentCertainThemeBinding
         get() = _binding ?: throw RuntimeException("FragmentCertainThemeBinding == null")
 
-    private val viewModelByFactory by lazy {
-        TheoryViewModelFactory(theme, requireActivity().application)
-    }
-    private val viewModel by lazy {
-        ViewModelProvider(this, viewModelByFactory)[TheoryViewModel::class.java]
-    }
+    //    private val viewModelByFactory by lazy {
+//        TheoryViewModelFactory(theme, requireActivity().application)
+//    }
+//    private val viewModel by lazy {
+//        ViewModelProvider(this, viewModelByFactory)[TheoryViewModel::class.java]
+//    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseArgs()
+        themeModule = ThemeModule(theme)
+        component.inject(this)
     }
 
     override fun onCreateView(
@@ -62,35 +73,39 @@ class LearningFragment : Fragment() {
             theme = it
         }
     }
+
     private fun setupRecyclerView() {
         binding.rvThemes.layoutManager = LinearLayoutManager(context)
         theoryAdapter = TheoryAdapter()
         // Установка адаптера для RecyclerView
         binding.rvThemes.adapter = theoryAdapter
     }
+
     private fun setupOnClickListener() {
         theoryAdapter.onTheoryItemClickListener = { _, position ->
             launchTheoryFragment(theoryList[position])
         }
     }
-    private fun launchQuestionFragment(theme: Theme, mode: Mode){
+
+    private fun launchQuestionFragment(theme: Theme, mode: Mode) {
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, QuestionFragment.newInstance(theme, mode))
             .addToBackStack(null)
             .commit()
     }
-    private fun launchTheoryFragment(theory: Theory){
+
+    private fun launchTheoryFragment(theory: Theory) {
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, TheoryFragment.newInstance(theory))
             .addToBackStack(null)
             .commit()
     }
 
-    private fun observeViewModel(){
-        viewModel.theoryList.observe(viewLifecycleOwner){
+    private fun observeViewModel() {
+        viewModel.theoryList.observe(viewLifecycleOwner) {
             theoryList = it
             theoryAdapter.theoryList = it
-            Log.d("LearningFragment","theoryList $theoryList")
+            Log.d("LearningFragment", "theoryList $theoryList")
         }
     }
 //    private fun setTheoryOptions(){

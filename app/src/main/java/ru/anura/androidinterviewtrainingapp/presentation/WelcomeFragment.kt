@@ -1,23 +1,40 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import ru.anura.androidinterviewtrainingapp.R
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentWelcomeBinding
+import ru.anura.androidinterviewtrainingapp.di.DaggerApplicationComponent
+import ru.anura.androidinterviewtrainingapp.di.ThemeModule
 import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
+import javax.inject.Inject
 
 class WelcomeFragment : Fragment() {
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: WelcomeViewModel
+
+    private val themeModule = ThemeModule(Theme.ALL)
+    private val component by lazy {
+        DaggerApplicationComponent.factory()
+            .create(requireActivity().application, themeModule)
+    }
+    //private lateinit var viewModel: WelcomeViewModel
     private var _binding: FragmentWelcomeBinding? = null
     private val binding: FragmentWelcomeBinding
         get() = _binding ?: throw RuntimeException("FragmentWelcomeBinding == null")
     private var count:Int = 0
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
