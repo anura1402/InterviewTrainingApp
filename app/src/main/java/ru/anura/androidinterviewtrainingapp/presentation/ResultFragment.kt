@@ -1,6 +1,7 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -85,21 +86,33 @@ class ResultFragment : Fragment() {
         binding.buttonMistakes.setOnClickListener {
             launchQuestionFragment(Theme.ALL, Mode.MISTAKES)
         }
-        binding.buttonAgain.setOnClickListener{
+        binding.buttonAgain.setOnClickListener {
             launchQuestionFragment(Theme.ALL, Mode.INTERVIEW)
         }
-        binding.scrollView.viewTreeObserver.addOnScrollChangedListener {
-            _binding?.let { safeBinding ->
-                val view = safeBinding.scrollView.getChildAt(safeBinding.scrollView.childCount - 1)
-                val diff = (view.bottom - (safeBinding.scrollView.height + safeBinding.scrollView.scrollY))
 
-                if (diff == 0) {
-                    // Пользователь достиг нижней части ScrollView
+        // addOnGlobalLayoutListener - Этот слушатель отслеживает изменения в глобальной раскладке (layout) всех элементов на экране
+        binding.scrollView.viewTreeObserver.addOnGlobalLayoutListener {
+            _binding?.let { safeBinding ->
+                //если scrollView не нужен и элементы вместились в экран:
+                if (!safeBinding.scrollView.canScrollVertically(1)) {
                     safeBinding.buttonReturn.visibility = View.VISIBLE
-                    safeBinding.scrollView.scrollTo(0, safeBinding.scrollView.getChildAt(0).height)
                 } else {
-                    // Пользователь еще не достиг нижней части
-                    safeBinding.buttonReturn.visibility = View.INVISIBLE
+                    val view =
+                        safeBinding.scrollView.getChildAt(safeBinding.scrollView.childCount - 1)
+                    val diff =
+                        (view.bottom - (safeBinding.scrollView.height + safeBinding.scrollView.scrollY))
+
+                    if (diff == 0) {
+                        // Пользователь достиг нижней части ScrollView
+                        safeBinding.buttonReturn.visibility = View.VISIBLE
+                        safeBinding.scrollView.scrollTo(
+                            0,
+                            safeBinding.scrollView.getChildAt(0).height
+                        )
+                    } else {
+                        // Пользователь еще не достиг нижней части
+                        safeBinding.buttonReturn.visibility = View.INVISIBLE
+                    }
                 }
             }
         }
@@ -110,6 +123,7 @@ class ResultFragment : Fragment() {
             testResult = it
         }
     }
+
     private fun returnToMainMenu() {
         requireActivity().supportFragmentManager.popBackStack(
             QuestionFragment.NAME,
@@ -118,7 +132,7 @@ class ResultFragment : Fragment() {
 
     }
 
-    private fun launchQuestionFragment(theme: Theme, mode: Mode){
+    private fun launchQuestionFragment(theme: Theme, mode: Mode) {
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, QuestionFragment.newInstance(theme, mode))
             .addToBackStack(null)
