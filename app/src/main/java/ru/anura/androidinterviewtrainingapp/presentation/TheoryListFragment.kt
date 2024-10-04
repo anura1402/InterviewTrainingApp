@@ -1,5 +1,6 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
+import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,34 +19,34 @@ import ru.anura.androidinterviewtrainingapp.domain.entity.Theory
 import ru.anura.androidinterviewtrainingapp.presentation.adapters.TheoryAdapter
 import javax.inject.Inject
 
-class LearningFragment : Fragment() {
+class TheoryListFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: TheoryViewModel
+    private lateinit var viewModel: TheoryListViewModel
     private var _binding: FragmentCertainThemeBinding? = null
     private val component by lazy {
+        val themeModule = ThemeModule(theme) // Используем тему из аргументов фрагмента
         DaggerApplicationComponent.factory()
-            .create(requireActivity().application, themeModule)
+            .create(requireActivity().application as Application, themeModule)
     }
 
     private lateinit var theme: Theme
-    private var themeModule = ThemeModule(theme)
     private lateinit var theoryAdapter: TheoryAdapter
     private var theoryList: List<Theory> = listOf()
     private val binding: FragmentCertainThemeBinding
         get() = _binding ?: throw RuntimeException("FragmentCertainThemeBinding == null")
 
-    //    private val viewModelByFactory by lazy {
-//        TheoryViewModelFactory(theme, requireActivity().application)
-//    }
-//    private val viewModel by lazy {
-//        ViewModelProvider(this, viewModelByFactory)[TheoryViewModel::class.java]
-//    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseArgs()
-        themeModule = ThemeModule(theme)
+        Log.d("Dagger", "THEORY_LIST theme: $theme ")
         component.inject(this)
+    }
+    private fun parseArgs() {
+        requireArguments().getParcelable<Theme>(KEY_THEME)?.let {
+            theme = it
+        }
+        Log.d("Dagger", "Parsed theme: $theme")
     }
 
     override fun onCreateView(
@@ -59,6 +60,8 @@ class LearningFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this, viewModelFactory)[TheoryListViewModel::class.java]
+        Log.d("Dagger", "Parsed theme: $theme")
         setupRecyclerView()
         binding.themeName.text = theme.toString()
         observeViewModel()
@@ -68,12 +71,13 @@ class LearningFragment : Fragment() {
         }
     }
 
-    private fun parseArgs() {
-        requireArguments().getParcelable<Theme>(KEY_THEME)?.let {
-            theme = it
+    private fun observeViewModel() {
+        viewModel.theoryList.observe(viewLifecycleOwner) {
+            theoryList = it
+            theoryAdapter.theoryList = it
+            Log.d("LearningFragment", "theoryList $theoryList")
         }
     }
-
     private fun setupRecyclerView() {
         binding.rvThemes.layoutManager = LinearLayoutManager(context)
         theoryAdapter = TheoryAdapter()
@@ -101,18 +105,6 @@ class LearningFragment : Fragment() {
             .commit()
     }
 
-    private fun observeViewModel() {
-        viewModel.theoryList.observe(viewLifecycleOwner) {
-            theoryList = it
-            theoryAdapter.theoryList = it
-            Log.d("LearningFragment", "theoryList $theoryList")
-        }
-    }
-//    private fun setTheoryOptions(){
-//        theoryAdapter.theoryList = theoryList
-//    }
-
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -121,8 +113,8 @@ class LearningFragment : Fragment() {
     companion object {
         private const val KEY_THEME = "theme"
         const val NAME = "LearningFragment"
-        fun newInstance(theme: Theme): LearningFragment {
-            return LearningFragment().apply {
+        fun newInstance(theme: Theme): TheoryListFragment {
+            return TheoryListFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(KEY_THEME, theme)
                 }

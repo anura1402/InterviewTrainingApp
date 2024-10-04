@@ -10,7 +10,6 @@ class ThemeModule(private val theme: Theme) {
 
     @Provides
     fun provideTheme(): Theme {
-        // Здесь можно задать логику для получения нужного значения Theme
-        return theme// Например, возвращаем тему LIGHT
+        return theme
     }
 }

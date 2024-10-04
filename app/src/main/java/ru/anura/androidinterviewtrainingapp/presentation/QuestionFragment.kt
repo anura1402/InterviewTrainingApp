@@ -33,12 +33,12 @@ class QuestionFragment : Fragment() {
     private lateinit var viewModel: QuestionViewModel
 
     private val component by lazy {
-        DaggerApplicationComponent.factory()
-            .create(requireActivity().application, themeModule)
+        (requireActivity().application as InterviewApp).component
     }
 
-    private lateinit var theme: Theme
-    private var themeModule = ThemeModule(theme)
+    //private lateinit var theme: Theme
+    private var theme = Theme.ALL
+    //private var themeModule = ThemeModule(theme)
     private lateinit var mode: Mode
     private lateinit var optionsAdapter: OptionsAdapter
 
@@ -65,17 +65,19 @@ class QuestionFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseArgs()
-        themeModule = ThemeModule(theme)
+        Log.d("Dagger", "QUESTION theme : $theme mode: $mode")
         component.inject(this)
+        //themeModule = ThemeModule(theme)
+        //component.inject(this)
     }
 
     private fun parseArgs() {
         requireArguments().getParcelable<Theme>(KEY_THEME)?.let {
             theme = it
-        }
+        }?: throw IllegalArgumentException("Theme is required")
         requireArguments().getParcelable<Mode>(KEY_MODE)?.let {
             mode = it
-        }
+        }?: throw IllegalArgumentException("Mode is required")
         Log.d("QuestionFragment", "theme: $theme mode: $mode")
     }
 

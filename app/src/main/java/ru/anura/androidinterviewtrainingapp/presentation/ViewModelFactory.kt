@@ -15,9 +15,8 @@ import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTestWithWrongQUse
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GetTheoryListUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.IsThemePassedUseCase
 import javax.inject.Inject
-import javax.inject.Provider
 
-class QuestionViewModelFactory @Inject constructor(
+class ViewModelFactory @Inject constructor(
     //private val viewModelProviders: @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ChildQuestionViewModelFactory>>
     private val changeIsCorrectUseCase: ChangeIsCorrectUseCase,
     private val changeIsFavUseCase: ChangeIsFavUseCase,
@@ -54,10 +53,11 @@ class QuestionViewModelFactory @Inject constructor(
                 getCorrectAnsweredCountUseCase,
                 isThemePassedUseCase
             ) as T
-        } else if (modelClass == TheoryViewModel::class.java) {
-            return TheoryViewModel(
+        } else if (modelClass == TheoryListViewModel::class.java) {
+            return TheoryListViewModel(
                 getTheoryListUseCase,
-                theme) as T
+                theme
+            ) as T
         }
         throw RuntimeException("Unknown view model class $modelClass")
     }

@@ -6,21 +6,12 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import ru.anura.androidinterviewtrainingapp.presentation.QuestionViewModel
-import ru.anura.androidinterviewtrainingapp.presentation.QuestionViewModelFactory
-import ru.anura.androidinterviewtrainingapp.presentation.TheoryViewModel
+import ru.anura.androidinterviewtrainingapp.presentation.ViewModelFactory
+import ru.anura.androidinterviewtrainingapp.presentation.TheoryListViewModel
 import ru.anura.androidinterviewtrainingapp.presentation.WelcomeViewModel
 
 @Module
 interface ViewModelModule {
-//    @Binds
-//    @IntoMap
-//    @ViewModelKey(QuestionViewModel::class)
-//    fun bindQuestionViewModel(questionViewModel: QuestionViewModel): ViewModel
-
-//    @Binds
-//    @IntoMap
-//    @ViewModelKey(QuestionViewModel::class)
-//    fun bindQuestionViewModel(questionViewModel: QuestionViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -34,13 +25,9 @@ interface ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(TheoryViewModel::class)
-    fun bindTheoryViewModel(viewModel: TheoryViewModel): ViewModel
+    @ViewModelKey(TheoryListViewModel::class)
+    fun bindTheoryViewModel(viewModel: TheoryListViewModel): ViewModel
 
     @Binds
-    fun bindViewModelFactory(factory: QuestionViewModelFactory): ViewModelProvider.Factory
-//    @Binds
-//    fun bindQuestionViewModelFactory(
-//        factory: QuestionViewModelFactory
-//    ): QuestionViewModelFactory
+    fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 }

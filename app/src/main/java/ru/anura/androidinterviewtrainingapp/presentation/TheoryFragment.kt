@@ -1,12 +1,10 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.text.style.BackgroundColorSpan
 import android.text.style.LineBackgroundSpan
 import android.text.style.TypefaceSpan
 import android.util.Log
@@ -15,19 +13,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import ru.anura.androidinterviewtrainingapp.R
-import ru.anura.androidinterviewtrainingapp.databinding.FragmentThemesBinding
 import ru.anura.androidinterviewtrainingapp.databinding.FragmentTheoryBinding
-import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
-import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theory
-import ru.anura.androidinterviewtrainingapp.presentation.adapters.TheoryAdapter
 
 class TheoryFragment : Fragment() {
+
     private var _binding: FragmentTheoryBinding? = null
     private lateinit var theory: Theory
     private var theoryList: List<Theory> = listOf()

@@ -26,28 +26,28 @@ class ThemesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonJava.setOnClickListener {
-            launchLearningFragment(Theme.JAVA)
+            launchTheoryListFragment(Theme.JAVA)
         }
         binding.buttonKotlin.setOnClickListener {
-            launchLearningFragment(Theme.KOTLIN)
+            launchTheoryListFragment(Theme.KOTLIN)
         }
         binding.buttonSQL.setOnClickListener {
-            launchLearningFragment(Theme.SQL)
+            launchTheoryListFragment(Theme.SQL)
         }
         binding.buttonAndroid.setOnClickListener {
-            launchLearningFragment(Theme.ANDROID)
+            launchTheoryListFragment(Theme.ANDROID)
         }
         binding.buttonThread.setOnClickListener {
-            launchLearningFragment(Theme.THREADS)
+            launchTheoryListFragment(Theme.THREADS)
         }
         binding.buttonBase.setOnClickListener {
-            launchLearningFragment(Theme.BASE)
+            launchTheoryListFragment(Theme.BASE)
         }
     }
 
-    private fun launchLearningFragment(theme: Theme) {
+    private fun launchTheoryListFragment(theme: Theme) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, LearningFragment.newInstance(theme))
+            .replace(R.id.main_container, TheoryListFragment.newInstance(theme))
             .addToBackStack(null)
             .commit()
     }

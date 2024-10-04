@@ -20,10 +20,9 @@ class WelcomeFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: WelcomeViewModel
 
-    private val themeModule = ThemeModule(Theme.ALL)
+    //private val themeModule = ThemeModule(Theme.ALL)
     private val component by lazy {
-        DaggerApplicationComponent.factory()
-            .create(requireActivity().application, themeModule)
+        (requireActivity().application as InterviewApp).component
     }
     //private lateinit var viewModel: WelcomeViewModel
     private var _binding: FragmentWelcomeBinding? = null
@@ -47,7 +46,7 @@ class WelcomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[WelcomeViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[WelcomeViewModel::class.java]
         viewModel.getCountOfQuestions()
         viewModel.getCorrectAnsweredCount()
         viewModel.countOfQuestions.observe(viewLifecycleOwner) { countOfQuestions ->
