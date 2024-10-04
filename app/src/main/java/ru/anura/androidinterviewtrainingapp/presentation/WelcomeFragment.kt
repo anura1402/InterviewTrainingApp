@@ -20,11 +20,9 @@ class WelcomeFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: WelcomeViewModel
 
-    //private val themeModule = ThemeModule(Theme.ALL)
     private val component by lazy {
         (requireActivity().application as InterviewApp).component
     }
-    //private lateinit var viewModel: WelcomeViewModel
     private var _binding: FragmentWelcomeBinding? = null
     private val binding: FragmentWelcomeBinding
         get() = _binding ?: throw RuntimeException("FragmentWelcomeBinding == null")

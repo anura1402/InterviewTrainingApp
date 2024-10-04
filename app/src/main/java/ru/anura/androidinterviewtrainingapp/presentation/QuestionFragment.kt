@@ -1,5 +1,6 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -33,12 +34,13 @@ class QuestionFragment : Fragment() {
     private lateinit var viewModel: QuestionViewModel
 
     private val component by lazy {
-        (requireActivity().application as InterviewApp).component
+        val themeModule = ThemeModule(theme) // Используем тему из аргументов фрагмента
+        DaggerApplicationComponent.factory()
+            .create(requireActivity().application as Application, themeModule)
     }
 
-    //private lateinit var theme: Theme
-    private var theme = Theme.ALL
-    //private var themeModule = ThemeModule(theme)
+    private lateinit var theme: Theme
+    //private var theme = Theme.ALL
     private lateinit var mode: Mode
     private lateinit var optionsAdapter: OptionsAdapter
 
@@ -46,21 +48,11 @@ class QuestionFragment : Fragment() {
     private val binding: FragmentQuestionsBinding
         get() = _binding ?: throw RuntimeException("FragmentQuestionsBinding == null")
 
-//    private val viewModelByFactory by lazy {
-//        QuestionViewModelFactory(theme, requireActivity().application)
-//    }
-//    private val viewModel by lazy {
-//        ViewModelProvider(this, viewModelByFactory)[QuestionViewModel::class.java]
-//    }
     private var previousId = 0
     private lateinit var pastTextView: TextView
     private var answerResults: LinkedHashMap<Int, Boolean> = LinkedHashMap()
     private var test: Test = Test(0, emptyList())
 
-    override fun onAttach(context: Context) {
-
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
