@@ -44,7 +44,7 @@ class ResultFragment : Fragment() {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    retryTest()
+                    returnToMainMenu()
                 }
             })
 
@@ -80,10 +80,13 @@ class ResultFragment : Fragment() {
         binding.tvResult.text = resultText
         binding.tvCounts.text = countText
         binding.buttonReturn.setOnClickListener {
-            retryTest()
+            returnToMainMenu()
         }
         binding.buttonMistakes.setOnClickListener {
             launchQuestionFragment(Theme.ALL, Mode.MISTAKES)
+        }
+        binding.buttonAgain.setOnClickListener{
+            launchQuestionFragment(Theme.ALL, Mode.INTERVIEW)
         }
         binding.scrollView.viewTreeObserver.addOnScrollChangedListener {
             _binding?.let { safeBinding ->
@@ -107,7 +110,7 @@ class ResultFragment : Fragment() {
             testResult = it
         }
     }
-    private fun retryTest() {
+    private fun returnToMainMenu() {
         requireActivity().supportFragmentManager.popBackStack(
             QuestionFragment.NAME,
             FragmentManager.POP_BACK_STACK_INCLUSIVE
