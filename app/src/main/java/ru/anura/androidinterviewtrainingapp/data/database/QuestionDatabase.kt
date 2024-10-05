@@ -35,10 +35,10 @@ abstract class QuestionDatabase : RoomDatabase() {
 
         private val MIGRATION_1_2 = object : Migration(1,2) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL(
-                    "UPDATE questionTable\n" +
-                            "SET isCorrectAnswer = NULL;"
-                )
+//                db.execSQL(
+//                    "UPDATE questionTable\n" +
+//                            "SET isCorrectAnswer = NULL;"
+//                )
             }
         }
         fun getInstance(application: Application): QuestionDatabase {
