@@ -40,6 +40,7 @@ class QuestionFragment : Fragment() {
     }
 
     private lateinit var theme: Theme
+
     //private var theme = Theme.ALL
     private lateinit var mode: Mode
     private lateinit var optionsAdapter: OptionsAdapter
@@ -66,10 +67,10 @@ class QuestionFragment : Fragment() {
     private fun parseArgs() {
         requireArguments().getParcelable<Theme>(KEY_THEME)?.let {
             theme = it
-        }?: throw IllegalArgumentException("Theme is required")
+        } ?: throw IllegalArgumentException("Theme is required")
         requireArguments().getParcelable<Mode>(KEY_MODE)?.let {
             mode = it
-        }?: throw IllegalArgumentException("Mode is required")
+        } ?: throw IllegalArgumentException("Mode is required")
         Log.d("QuestionFragment", "theme: $theme mode: $mode")
     }
 
@@ -118,10 +119,13 @@ class QuestionFragment : Fragment() {
             for ((key) in answerResults) {
                 lastKey = key
             }
-            Log.d("Explanation","answerResults: $answerResults, answerResults[lastKey]: ${answerResults[lastKey]} lastKey: ${lastKey}")
+            Log.d(
+                "Explanation",
+                "answerResults: $answerResults, answerResults[lastKey]: ${answerResults[lastKey]} lastKey: ${lastKey}"
+            )
             binding.explanationTv.text = it
             if (answerResults[lastKey] == false) {
-                Log.d("Explanation","HERE")
+                Log.d("Explanation", "HERE")
                 binding.explanationTv.isVisible = true
             } else if (answerResults[lastKey] == true) {
                 binding.explanationTv.isVisible = binding.explanationCB.isChecked

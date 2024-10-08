@@ -131,7 +131,7 @@ class QuestionViewModel @Inject constructor(
 
 
     private fun checkIfAnswerWasFull(index: Int) {
-        if (!isCorrectTotal) {
+        if (!isCorrectTotal && _answerResults.value?.containsKey(index) == false) {
 //            _answerResults.value = _answerResults.value.orEmpty().toMutableMap().apply {
 //                put(index, isCorrectTotal)
 //            }
