@@ -119,10 +119,6 @@ class QuestionFragment : Fragment() {
             for ((key) in answerResults) {
                 lastKey = key
             }
-            Log.d(
-                "Explanation",
-                "answerResults: $answerResults, answerResults[lastKey]: ${answerResults[lastKey]} lastKey: ${lastKey}"
-            )
             binding.explanationTv.text = it
             if (answerResults[lastKey] == false) {
                 Log.d("Explanation", "HERE")
@@ -280,7 +276,6 @@ class QuestionFragment : Fragment() {
     }
 
     private fun setExplanationSettings(numberOfQuestion: Int) {
-        Log.d("Explanation", "numberOfQuestion: $numberOfQuestion")
         viewModel.setExplanation(numberOfQuestion)
         binding.explanationCB.setOnCheckedChangeListener(null)
         binding.explanationCB.isChecked = false

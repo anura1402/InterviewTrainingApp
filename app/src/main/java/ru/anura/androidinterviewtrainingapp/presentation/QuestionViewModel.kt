@@ -1,12 +1,9 @@
 package ru.anura.androidinterviewtrainingapp.presentation
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ru.anura.androidinterviewtrainingapp.data.InterviewRepositoryImpl
 import ru.anura.androidinterviewtrainingapp.domain.entity.Test
 import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 import ru.anura.androidinterviewtrainingapp.domain.usecases.ChangeIsCorrectUseCase
@@ -14,9 +11,6 @@ import ru.anura.androidinterviewtrainingapp.domain.usecases.ChangeIsFavUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GenerateTestCurrentThemeUseCase
 import ru.anura.androidinterviewtrainingapp.domain.usecases.GenerateTestUseCase
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import ru.anura.androidinterviewtrainingapp.domain.entity.Mode
 import ru.anura.androidinterviewtrainingapp.domain.entity.TestResult
@@ -34,27 +28,13 @@ class QuestionViewModel @Inject constructor(
     private val generateTestUseCase: GenerateTestUseCase,
     private val getTestWithWrongQUseCase: GetTestWithWrongQUseCase,
     private val getTestWithFavQUseCase: GetTestWithFavQUseCase,
-    private val getCountOfQuestionsUseCase: GetCountOfQuestionsUseCase ,
+    private val getCountOfQuestionsUseCase: GetCountOfQuestionsUseCase,
     private val getCountOfQuestionsByCurrentThemeUseCase: GetCountOfQuestionsByCurrentThemeUseCase,
 
     private val theme: Theme
-) : ViewModel(){
-    //AndroidViewModel(application) {
-    //private val repository = InterviewRepositoryImpl(application)
-
-//    private val changeIsCorrectUseCase = ChangeIsCorrectUseCase(repository)
-//    private val changeIsFavUseCase = ChangeIsFavUseCase(repository)
-//
-//    private val generateTestCurrentThemeUseCase = GenerateTestCurrentThemeUseCase(repository)
-//    private val generateTestUseCase = GenerateTestUseCase(repository)
-//    private val getTestWithWrongQUseCase = GetTestWithWrongQUseCase(repository)
-//    private val getTestWithFavQUseCase = GetTestWithFavQUseCase(repository)
-//    private val getCountOfQuestionsUseCase = GetCountOfQuestionsUseCase(repository)
-//    private val getCountOfQuestionsByCurrentThemeUseCase =
-//        GetCountOfQuestionsByCurrentThemeUseCase(repository)
+) : ViewModel() {
 
     private var countOfRightAnswers = 0
-    private var countOfQuestions = 0
     private var allCountOfQuestions = 0
     private var _test = MutableLiveData<Test>()
     val test: LiveData<Test>
@@ -63,9 +43,6 @@ class QuestionViewModel @Inject constructor(
     private val _answerResults = MutableLiveData<LinkedHashMap<Int, Boolean>>()
     val answerResults: LiveData<LinkedHashMap<Int, Boolean>>
         get() = _answerResults
-//    private val _resultForPositions = MutableLiveData<List<Boolean>>()
-//    val resultForPositions: LiveData<List<Boolean>>
-//        get() = _resultForPositions
 
     private val _favList = MutableLiveData<Map<Int, Boolean>>()
     val favList: LiveData<Map<Int, Boolean>>
@@ -106,7 +83,6 @@ class QuestionViewModel @Inject constructor(
     }
 
     fun getResultForOptions(questionId: Int): List<Boolean>? {
-        //Log.d("OptionsAdapter", "_resultForPositions from getter: ${_resultForOptions[questionId]}")
         return _resultForOptions[questionId]
     }
 
@@ -120,7 +96,6 @@ class QuestionViewModel @Inject constructor(
 
     fun onButtonClicked(index: Int) {
         checkIfAnswerWasFull(index)
-        //setExplanation(index)
         _clickedButtonOnQuestionId.value = index
 
     }
@@ -131,14 +106,12 @@ class QuestionViewModel @Inject constructor(
 
 
     private fun checkIfAnswerWasFull(index: Int) {
-        if (!isCorrectTotal && _answerResults.value?.containsKey(index) == false) {
-//            _answerResults.value = _answerResults.value.orEmpty().toMutableMap().apply {
-//                put(index, isCorrectTotal)
-//            }
+        if (!isCorrectTotal && (_answerResults.value?.entries?.last()?.key ?: -1) == index) {
+            Log.d("ResultAnswer", "YES")
             _answerResults.value = (_answerResults.value ?: LinkedHashMap()).apply {
                 put(index, isCorrectTotal)
             }
-            changeIsCorrect(index, isCorrectTotal)
+            changeIsCorrectInDB(index, isCorrectTotal)
             setExplanation(index)
         }
     }
@@ -171,7 +144,6 @@ class QuestionViewModel @Inject constructor(
     }
 
     fun checkAnswer(questionId: Int, selectedAnswer: String, correctAnswer: List<String>) {
-        Log.d("QuestionViewModel", "correctAnswer: $correctAnswer")
         val isCorrect = correctAnswer.contains(selectedAnswer)
         if (_answerResults.value?.containsKey(questionId) == false)
             selectedAnswers.clear()
@@ -188,10 +160,10 @@ class QuestionViewModel @Inject constructor(
         addIsCorrectToResult(questionId, isCorrect)
         if (isCorrectTotal) {
             countOfRightAnswers++
-            changeIsCorrect(questionId, true)
+            changeIsCorrectInDB(questionId, true)
         }
         if (!isCorrect) {
-            changeIsCorrect(questionId, false)
+            changeIsCorrectInDB(questionId, false)
             setExplanation(questionId)
         }
     }
@@ -200,10 +172,9 @@ class QuestionViewModel @Inject constructor(
         val currentValues = _resultForOptions[questionId] ?: listOf()
         val updatedValues = currentValues + isCorrect
         _resultForOptions[questionId] = updatedValues
-        Log.d("OptionsAdapter", "_resultForPositions: ${_resultForOptions[questionId]}")
     }
 
-    private fun changeIsCorrect(questionId: Int, isCorrect: Boolean) {
+    private fun changeIsCorrectInDB(questionId: Int, isCorrect: Boolean) {
         viewModelScope.launch {
             changeIsCorrectUseCase(questionIdsFromDB[questionId], isCorrect)
         }
@@ -211,10 +182,6 @@ class QuestionViewModel @Inject constructor(
 
 
     fun finishTest() {
-        Log.d(
-            "QuestionViewModel",
-            "countOfRightAnswers: $countOfRightAnswers"
-        )
         _testResult.value = TestResult(
             countOfRightAnswers,
             test.value?.countOfQuestions ?: 0
@@ -240,10 +207,6 @@ class QuestionViewModel @Inject constructor(
             }
         }
         job.join()
-        Log.d(
-            "QuestionViewModel",
-            "theme $theme getCountOfQuestions(theme) ${getCountOfQuestions(theme)}"
-        )
         _test.value?.let { testValue ->
             for (i in 0 until testValue.countOfQuestions) {
                 questionIdsFromDB.add(testValue.questions[i].id)
