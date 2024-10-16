@@ -25,8 +25,4 @@ class TheoryMapper @Inject constructor(){
         mapDbModelToEntity(it)
     }
 
-
-//    fun mapListDbModelToListEntity(list: List<ShopItemDBModel>) = list.map {
-//        mapDbModelToEntity(it)
-//    }
 }

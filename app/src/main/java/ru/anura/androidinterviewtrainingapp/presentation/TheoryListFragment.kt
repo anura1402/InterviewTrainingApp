@@ -39,14 +39,12 @@ class TheoryListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseArgs()
-        Log.d("Dagger", "THEORY_LIST theme: $theme ")
         component.inject(this)
     }
     private fun parseArgs() {
         requireArguments().getParcelable<Theme>(KEY_THEME)?.let {
             theme = it
         }
-        Log.d("Dagger", "Parsed theme: $theme")
     }
 
     override fun onCreateView(
@@ -61,7 +59,6 @@ class TheoryListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[TheoryListViewModel::class.java]
-        Log.d("Dagger", "Parsed theme: $theme")
         setupRecyclerView()
         binding.themeName.text = theme.toString()
         observeViewModel()
@@ -75,7 +72,6 @@ class TheoryListFragment : Fragment() {
         viewModel.theoryList.observe(viewLifecycleOwner) {
             theoryList = it
             theoryAdapter.theoryList = it
-            Log.d("LearningFragment", "theoryList $theoryList")
         }
     }
     private fun setupRecyclerView() {

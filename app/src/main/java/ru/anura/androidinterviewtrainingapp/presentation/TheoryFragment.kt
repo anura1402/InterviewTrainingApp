@@ -45,9 +45,7 @@ class TheoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.theoryName.text = theory.name
         val result = splitText(theory.text)
-        Log.d("TheoryFragment", "result: $result, theory.text: ${theory.text}")
         binding.theoryText.setText( result, TextView.BufferType.SPANNABLE)
-        //Log.d("TheoryFragment", "theory.text: ${theory.text}")
         binding.buttonBack.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }

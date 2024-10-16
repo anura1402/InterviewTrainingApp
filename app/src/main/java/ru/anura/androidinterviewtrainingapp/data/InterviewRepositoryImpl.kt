@@ -12,8 +12,8 @@ import ru.anura.androidinterviewtrainingapp.domain.repository.InterviewRepositor
 import javax.inject.Inject
 
 class InterviewRepositoryImpl @Inject constructor(
-    private val questionDao: QuestionDao, // = QuestionDatabase.getInstance(application).questionDao()
-    private val mapper: QuestionMapper // = QuestionMapper()
+    private val questionDao: QuestionDao,
+    private val mapper: QuestionMapper
 ) : InterviewRepository {
 
 
@@ -56,7 +56,6 @@ class InterviewRepositoryImpl @Inject constructor(
             )
         )
         val questionsWithShuffledOptions = shuffleOptions(questions)
-        Log.d("AndroidRuntime", "count ${questions.size} countOfQuestions $countOfQuestions")
         if (questions.size < countOfQuestions) {
             throw IllegalArgumentException("Недостаточно вопросов в базе данных для создания теста.")
         }

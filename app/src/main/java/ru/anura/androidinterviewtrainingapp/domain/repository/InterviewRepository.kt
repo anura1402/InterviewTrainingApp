@@ -8,9 +8,7 @@ interface InterviewRepository {
 
     suspend fun changeIsFav(id: Int, isFav:Boolean)
     suspend fun changeIsCorrect(id: Int, isCorrect:Boolean)
-    //fun getTheme()
-//    fun generateQuestion():Question
-//    fun generateQuestionCurrentTheme(theme:Theme):Question
+
     fun getQuestionById(id: Int):Question
 
     suspend fun generateTestCurrentTheme(theme:Theme,countOfQuestions:Int): Test

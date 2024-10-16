@@ -13,6 +13,5 @@ import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 interface TheoryDao {
     @Query("SELECT * FROM theoryTable WHERE theory_theme = :theme")
     suspend fun getTheoryList(theme: String): List<TheoryDBModel>
-//        @Query("SELECT * FROM theoryTable")
-//        suspend fun getTheoryList(): List<TheoryDBModel>
+
 }

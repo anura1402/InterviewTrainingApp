@@ -10,12 +10,11 @@ import ru.anura.androidinterviewtrainingapp.domain.repository.TheoryRepository
 import javax.inject.Inject
 
 class TheoryRepositoryImpl @Inject constructor(
-    private val theoryDao: TheoryDao, //= QuestionDatabase.getInstance(application).theoryDao()
-    private val mapper: TheoryMapper //= TheoryMapper()
+    private val theoryDao: TheoryDao,
+    private val mapper: TheoryMapper
 ) : TheoryRepository {
 
     override suspend fun getTheoryList(theme: Theme): List<Theory> {
         return mapper.mapListDbModelToListEntity(theoryDao.getTheoryList(theme.toString()))
-        //return mapper.mapListDbModelToListEntity(theoryDao.getTheoryList())
     }
 }

@@ -16,22 +16,10 @@ class Converters {
     fun toTheme(theme: String): Theme {
         return Theme.valueOf(theme)
     }
-//    @TypeConverter
-//    fun fromStringList(value: List<String>): String {
-//        return Gson().toJson(value)
-//    }
-//
-//    @TypeConverter
-//    fun toStringList(value: String): List<String> {
-//        val listType = object : TypeToken<List<String>>() {}.type
-//        return Gson().fromJson(value, listType)
-//    }
-
 
     @TypeConverter
     fun fromString(value: String?): List<String> {
         if (value.isNullOrEmpty()) return emptyList()
-
         return try {
             // Попытка разобрать как JSON массив
             val listType = object : TypeToken<List<String>>() {}.type

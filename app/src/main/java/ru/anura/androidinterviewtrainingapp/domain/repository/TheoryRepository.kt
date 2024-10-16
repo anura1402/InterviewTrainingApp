@@ -6,5 +6,4 @@ import ru.anura.androidinterviewtrainingapp.domain.entity.Theory
 interface TheoryRepository {
 
     suspend fun getTheoryList(theme: Theme): List<Theory>
-    //fun getTheme(): Theme
 }

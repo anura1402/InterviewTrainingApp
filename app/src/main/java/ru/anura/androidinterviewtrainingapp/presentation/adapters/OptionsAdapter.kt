@@ -21,7 +21,6 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
     private var onItemClick: (Int) -> Unit = {}
     private var selectedItemPosition: Int = RecyclerView.NO_POSITION
     private var isOptionSelectable = true
-    private val selectedItemsMap = mutableMapOf<Int, Boolean?>()
     private var selectedItemPositions = mutableListOf<Int>()
     private var resultForOptions = mutableListOf<Boolean>()
     private var numberOfQuestion: Int = 0
@@ -44,26 +43,18 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
         ) {
             selectedItemPositions.clear()
             resultForOptions.clear()
-            Log.d("OptionsAdapter", "___________________________________________________________________________________")
-            Log.d("OptionsAdapter", "IS CLEARED")
         }
         for (position in positions) {
             if (!selectedItemPositions.contains(position)) {
                 selectedItemPositions.add(position)
             }
         }
-        //selectedItemPositions.addAll(positions)
-        //selectedItemPositions.addAll(positions)
         notifyDataSetChanged()
-        Log.d(
-            "OptionsAdapter",
-            "selectedItemPositions: $selectedItemPositions, numberOfQuestion: ${numberOfQuestion+1}, previousNumberOfQuestion: ${previousNumberOfQuestion+1} positions: $positions"
-        )
+
     }
 
     fun setResultForOptions(resultForOptions: List<Boolean>) {
         this.resultForOptions.addAll(resultForOptions)
-        Log.d("OptionsAdapter2", "2 resultForOptions: $resultForOptions")
     }
 
     fun setOnItemClickListener(listener: (Int) -> Unit) {
@@ -96,8 +87,7 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
         private val wrongColor = ContextCompat.getColor(itemView.context, R.color.wrong_answer)
         private var positions: Set<Int> = emptySet()
         fun bind(position: Int) {
-            positions= emptySet()
-            Log.d("OptionsAdapter", "1 positions: $positions")
+            positions = emptySet()
             var isCorrect =
                 if (answerResults[currentQuestionId] == null) null else answerResults[currentQuestionId] == true
             if (isCorrect != null && !isCorrect) {
@@ -107,29 +97,29 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
                 if (isOptionSelectable) {
                     isCorrect = answerResults[currentQuestionId] == true
                     positions = positions + position
-                    Log.d("OptionsAdapter", "2 positions: $positions")
                     setSelectedPositions(positions, numberOfQuestion)
                     selectedItemPosition = position
                     notifyItemChanged(position)
                     onItemClick(position)
                 }
             }
-            Log.d("OptionsAdapter", "------position: $position, selectedItemPosition: $selectedItemPosition, selectedItemPositions.indexOf(position) : ${selectedItemPositions.indexOf(position)}, resultForOptions: $resultForOptions isCorrect: $isCorrect")
             if (position == selectedItemPosition) {
                 if (isCorrect !== null) {
                     setResultForOptions(listOf(isCorrect!!))
                 } else {
                     resultForOptions.clear()
                 }
-                Log.d("OptionsAdapter", "3 resultForOptions: $resultForOptions")
             }
-            //val index = selectedItemPositions.indexOf(position)
-
-            //Log.d("OptionsAdapter", "position: $position, index: $index, selectedItemPositions: $selectedItemPositions, resultForOptions: $resultForOptions")
             try {
-                if (selectedItemPositions.contains(position) && resultForOptions[selectedItemPositions.indexOf(position)]) {
+                if (selectedItemPositions.contains(position) && resultForOptions[selectedItemPositions.indexOf(
+                        position
+                    )]
+                ) {
                     itemView.setBackgroundColor(correctColor)
-                } else if (selectedItemPositions.contains(position) && !resultForOptions[selectedItemPositions.indexOf(position)]) {
+                } else if (selectedItemPositions.contains(position) && !resultForOptions[selectedItemPositions.indexOf(
+                        position
+                    )]
+                ) {
                     itemView.setBackgroundColor(wrongColor)
                 } else {
                     itemView.setBackgroundColor(Color.WHITE)
@@ -137,21 +127,6 @@ class OptionsAdapter() : RecyclerView.Adapter<OptionsAdapter.AnswerOptionViewHol
             } catch (e: Exception) {
                 Toast.makeText(itemView.context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
-
-//            Log.d(
-//                "OptionsAdapter",
-//                "selectedItemPositions: $selectedItemPositions, position: $position isCorrect: $isCorrect resultForOptions: $resultForOptions"
-//            )
-//            if (selectedItemPositions.size >= 2 && isCorrect == false) {
-//                for (i in 0..selectedItemPositions.size - 2) {
-//                    if (position == i) {
-//                        itemView.setBackgroundColor(correctColor)
-//                    }
-//                }
-//            }
-
-            //Log.d("OptionsAdapter", "selectedItemPositions: $selectedItemPositions")
-
             if (isCorrect == null) {
                 itemView.setBackgroundColor(Color.WHITE)
             }

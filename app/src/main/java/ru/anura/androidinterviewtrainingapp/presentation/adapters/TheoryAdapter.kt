@@ -26,7 +26,6 @@ class TheoryAdapter: RecyclerView.Adapter<TheoryAdapter.TheoryViewHolder>() {
 
     override fun onBindViewHolder(holder: TheoryViewHolder, position: Int) {
         val theory = this.theoryList[position]
-        Log.d("LearningFragment","theory $theory")
         holder.tvThemeOption.text = theory.name
         holder.view.setOnClickListener {
             onTheoryItemClickListener?.invoke(theory,position)
