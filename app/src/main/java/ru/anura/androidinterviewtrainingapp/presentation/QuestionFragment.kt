@@ -128,7 +128,7 @@ class QuestionFragment : Fragment() {
             }
         }
         viewModel.testResult.observe(viewLifecycleOwner) { testResult ->
-            launchResultFragment(testResult)
+            launchResultFragment(testResult, mode)
         }
     }
 
@@ -339,9 +339,9 @@ class QuestionFragment : Fragment() {
         }
     }
 
-    private fun launchResultFragment(testResult: TestResult) {
+    private fun launchResultFragment(testResult: TestResult, mode: Mode) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, ResultFragment.newInstance(testResult))
+            .replace(R.id.main_container, ResultFragment.newInstance(testResult, mode))
             .addToBackStack(null)
             .commit()
     }

@@ -18,6 +18,7 @@ import ru.anura.androidinterviewtrainingapp.domain.entity.Theme
 
 class ResultFragment : Fragment() {
     private lateinit var testResult: TestResult
+    private lateinit var mode: Mode
     private var _binding: FragmentResultBinding? = null
     private val binding: FragmentResultBinding
         get() = _binding ?: throw RuntimeException("FragmentResultBinding == null")
@@ -87,7 +88,7 @@ class ResultFragment : Fragment() {
             launchQuestionFragment(Theme.ALL, Mode.MISTAKES)
         }
         binding.buttonAgain.setOnClickListener {
-            launchQuestionFragment(Theme.ALL, Mode.INTERVIEW)
+            launchQuestionFragment(Theme.ALL, mode)
         }
 
         // addOnGlobalLayoutListener - Этот слушатель отслеживает изменения в глобальной раскладке (layout) всех элементов на экране
@@ -122,6 +123,9 @@ class ResultFragment : Fragment() {
         requireArguments().getParcelable<TestResult>(KEY_RESULT)?.let {
             testResult = it
         }
+        requireArguments().getParcelable<Mode>(KEY_MODE)?.let {
+            mode = it
+        }
     }
 
     private fun returnToMainMenu() {
@@ -148,10 +152,12 @@ class ResultFragment : Fragment() {
 
         const val NAME = "ResultFragment"
         private const val KEY_RESULT = "result"
-        fun newInstance(testResult: TestResult): ResultFragment {
+        private const val KEY_MODE = "mode"
+        fun newInstance(testResult: TestResult, mode: Mode): ResultFragment {
             return ResultFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(KEY_RESULT, testResult)
+                    putSerializable(KEY_MODE, mode)
                 }
             }
         }
